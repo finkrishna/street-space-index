@@ -10,7 +10,7 @@
 :root{
   --bg:#FBFAF7;--card:#FFFFFF;--ink:#1F1E1B;--ink2:#5F5E5A;--ink3:#888780;--line:#E4E2DA;--soft:#F1EFE8;
   --accent:#0F6E56;--accent-bg:#E1F5EE;--warn:#854F0B;--warn-bg:#FAEEDA;--err:#A32D2D;
-  --walk:#1D9E75;--cycle:#5DCAA5;--goods:#5F5E5A;--pt:#7F77DD;--ipt:#EF9F27;--tw:#D85A30;--car:#D4537E;--other:#B4B2A9;
+  --walk:#1D9E75;--cycle:#5DCAA5;--goods:#888780;--parked:#444441;--pt:#7F77DD;--ipt:#EF9F27;--tw:#D85A30;--car:#D4537E;--other:#B4B2A9;
 }
 @media (prefers-color-scheme:dark){:root{
   --bg:#1A1A18;--card:#242422;--ink:#EDEBE4;--ink2:#B4B2A9;--ink3:#888780;--line:#3A3936;--soft:#2E2D2A;
@@ -144,8 +144,18 @@ footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);font-si
 <p style="margin-top:16px"><b>Why it exists.</b> Pune has been unusually deliberate about streets: a <a href="https://indiastaging.itdp.org/wp-content/uploads/2023/04/Punes-Sustainable-Transport-Journey.pdf" target="_blank" rel="noopener">2008 mobility plan</a> that set a 2031 goal of 90% of trips by walking, cycling and public transport; Urban Street Design Guidelines; a Pedestrian Policy; a 2017 Bicycle Plan; and, according to ITDP, close to half of the transport budget going to sustainable transport since 2016. The city proposed this assessment in 2022 to check whether that spending was working. Most cities never measure their own streets this way.</p>
 <p><b>What it found</b>, in its own words, summarised: 30% of surveyed length had footpaths that were present but unusable; on poorly performing streets up to 80% of people walked off the footpath; only 14% of 675 caregivers felt safe letting children walk to school alone; 34% would take up cycling if it were safe. Streets built to the city's own design guidelines did better in every survey. JM Road scored 25.5/30. Magarpatta–Mundhwa scored 7.</p>
 
+<h2>Parking: the hidden width tax</h2>
+<p>Pune builds wide roads, and buildings are approved on the strength of that width. Then one lane on each side fills with office parking, another with delivery and short-stay vehicles, and a 24 m road works like a 1.5-lane squeeze, often outside buildings whose own sanctioned parking sits underused. Parked vehicles move nobody, yet they take width from everyone: pedestrians, two-wheelers, buses and cars alike.</p>
+<div class="steps">
+  <div class="card"><small>ALREADY IN THE NUMBERS</small><h3>Parking on footpaths</h3><p class="muted">ITDP found parked vehicles are a main reason footpaths are "present but unusable". That's inside the "as usable today" figures above.</p></div>
+  <div class="card"><small>NOT IN ITDP'S DRAWINGS</small><h3>Parking on traffic lanes</h3><p class="muted">ITDP drew traffic lanes clear. On many streets they aren't. Use the slider to add it: parked width moves to "Parked vehicles" and the lanes left for moving traffic shrink.</p></div>
+  <div class="card"><small>WHAT ITDP RECOMMENDS</small><h3>Manage it, don't ignore it</h3><p class="muted">Active enforcement under the parking policy, and Area Level Parking Plans with on-street parking operators, starting on redesigned streets.</p></div>
+</div>
+<div class="row" style="margin-top:14px"><button class="btn" id="squeezeBtn" type="button">Show the squeeze: 2.5 m of parking each side</button><button class="btn ghost" id="unsqueezeBtn" type="button">As ITDP drew it</button></div>
+<p class="muted" style="margin-top:10px">With 2.5 m of parking each side, Karve Road drops from about 4.6 traffic lanes to 3.1, roughly 1.5 per direction, and nearly half the street moves nobody. Where buses share the lanes, they lose space too. One uniform figure for every street is crude: JM Road, for one, has managed parking. Better kerb counts per street would replace it.</p>
+
 <h2>Adjust the assumptions</h2>
-<p>Widths and counts are measured. Converting vehicles into people and road space needs judgement. Move the sliders. Everything updates live, including your own road.</p>
+<p>Widths and counts are measured. Converting vehicles into people and road space needs judgement, and so does how much traffic-lane width is lost to parking. Move the sliders. Everything updates live, including your own road.</p>
 <div class="card">
   <div class="cols" id="sliders"></div>
   <div class="row"><button class="btn ghost" id="resetBtn" type="button">Reset to defaults</button></div>
@@ -205,12 +215,13 @@ footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);font-si
   <li><b>Bus occupancy drives the bus numbers.</b> One bus at 40 people outweighs dozens of cars. Move the slider to test it.</li>
   <li><b>World streets are illustrative.</b> Only Nørrebrogade has published counts. The others use estimated widths and city-level travel patterns, to give a sense of scale, not a measurement.</li>
   <li><b>One section per street.</b> ITDP drew one representative cross-section per street. Real widths vary block by block.</li>
+  <li><b>Parking on traffic lanes isn't measured.</b> ITDP drew lanes clear. The parking slider is a scenario applied uniformly, not an observation. The real squeeze varies by street and hour.</li>
   <li><b>Registered isn't on the road.</b> Pune RTO totals rarely remove scrapped vehicles. That affects the city context figures, not the street results.</li>
 </ul>
 
 <h2>Progress</h2>
-<div class="progress" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100"><div style="width:70%"></div></div>
-<p class="muted">70% · Done: 11 Pune streets from ITDP measurements, 4 world reference streets, adjustable assumptions, your-own-road tool. Next: block-by-block widths, all-day counts, more cities from your requests.</p>
+<div class="progress" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"><div style="width:75%"></div></div>
+<p class="muted">75% · Done: 11 Pune streets from ITDP measurements, 4 world reference streets, parking layer, adjustable assumptions, your-own-road tool. Next: measured kerb-parking counts per street, block-by-block widths, all-day counts, more cities from your requests.</p>
 
 <h2>Sources</h2>
 <ol class="src" id="sources"></ol>
@@ -222,7 +233,7 @@ footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);font-si
 </main>
 <script>
 const REPO = "https://github.com/finkrishna/street-space-index";
-const G = [["walk","Walk","--walk"],["cycle","Cycle","--cycle"],["pt","Bus + metro","--pt"],["ipt","Auto + cab","--ipt"],["tw","Two-wheeler","--tw"],["car","Car","--car"],["goods","Goods vehicles","--goods"],["other","Other / unusable","--other"]];
+const G = [["walk","Walk","--walk"],["cycle","Cycle","--cycle"],["pt","Bus + metro","--pt"],["ipt","Auto + cab","--ipt"],["tw","Two-wheeler","--tw"],["car","Car","--car"],["goods","Goods vehicles","--goods"],["parked","Parked vehicles","--parked"],["other","Other / unusable","--other"]];
 const PEOPLE = ["walk","cycle","pt","ipt","tw","car"];
 const WF = [["footpath","Footpaths (both sides)"],["cycle_track","Cycle track"],["bus_lane","Dedicated bus lane"],["carriageway","Traffic lanes"],["parking","Parking"],["other","Medians, planters, other"]];
 const SF = [["walk","Walk"],["cycle","Cycle"],["bus","Bus"],["metro","Metro / rail"],["ipt","Auto + cab"],["two_wheeler","Two-wheeler"],["car","Car"]];
@@ -235,7 +246,7 @@ const SL = [
   ["pcu","ipt","Lane space: auto",0.8,2,0.1,v=>v.toFixed(1)+"×","Relative to a car"],
   ["pcu","bus","Lane space: bus",2,4,0.1,v=>v.toFixed(1)+"×","Relative to a car"],
   ["pcu","goods","Lane space: goods vehicle",1,4,0.1,v=>v.toFixed(1)+"×","LCVs and trucks"],
-  ["parking_split","car","Parking used by cars",0,1,0.05,v=>Math.round(v*100)+"%","Rest is two-wheelers"]
+  ["scenario","informal","Parking on traffic lanes",0,3.5,0.25,v=>v.toFixed(2)+" m","Per side, Indian streets. 2.5 m ≈ one lane"]
 ];
 let MODEL, BASE, asDrawn = false, sel = "karve-road";
 
@@ -253,6 +264,7 @@ function demand(road, m){
           {two_wheeler:s.two_wheeler/o.two_wheeler, car:s.car/o.car, ipt:s.ipt/o.ipt, bus:s.bus/o.bus, goods:0}];
 }
 function compute(road, m, drawn){
+  const informal = m.scenario ? m.scenario.informal : 0;
   const w = road.widths_m; const W = Object.values(w).reduce((a,b)=>a+b,0);
   const u = drawn ? {footpath:1,cycle_track:1} : Object.assign({footpath:1,cycle_track:1}, road.usable||{});
   const [people, veh] = demand(road, m);
@@ -261,23 +273,24 @@ function compute(road, m, drawn){
   const lane = {}; let tot = 0;
   modes.forEach(k=>{ lane[k] = veh[k]*m.pcu[k]; tot += lane[k]; });
   const s = {}; ["two_wheeler","car","ipt","goods","bus"].forEach(k=> s[k] = tot ? (lane[k]||0)/tot : 0);
-  const ps = road.parking_split || m.parking_split;
   const cw = w.carriageway||0, pk = w.parking||0;
+  const inf = road.group==="world" ? 0 : Math.min(cw, 2*Math.max(0, informal));
+  const cwm = cw - inf;
   const space = {
     walk:(w.footpath||0)*u.footpath/W, cycle:(w.cycle_track||0)*u.cycle_track/W,
-    pt:((w.bus_lane||0)+cw*s.bus)/W, ipt:cw*s.ipt/W,
-    tw:(cw*s.two_wheeler + pk*(ps.two_wheeler||0))/W, car:(cw*s.car + pk*(ps.car||0))/W, goods:cw*s.goods/W
+    pt:((w.bus_lane||0)+cwm*s.bus)/W, ipt:cwm*s.ipt/W,
+    tw:cwm*s.two_wheeler/W, car:cwm*s.car/W, goods:cwm*s.goods/W, parked:(pk+inf)/W
   };
   space.other = Math.max(0, 1 - Object.values(space).reduce((a,b)=>a+b,0));
   const P = PEOPLE.reduce((a,k)=>a+people[k],0) || 1;
   const share = {}; Object.keys(space).forEach(k=> share[k] = PEOPLE.includes(k) ? people[k]/P : 0);
   const index = {}; Object.keys(space).forEach(k=> index[k] = share[k] ? space[k]/share[k] : null);
   const ss = space.walk+space.cycle+space.pt, sp = share.walk+share.cycle+share.pt;
-  const ms = space.car+space.tw+space.ipt, mp = share.car+share.tw+share.ipt;
+  const ms = space.car+space.tw+space.ipt+space.parked, mp = share.car+share.tw+share.ipt;
   const ratio = (mp && ss && sp) ? (ms/mp)/(ss/sp) : 0;
   const pct = ss*100, g = m.grades;
   const grade = pct >= g.good_min ? "Good" : pct < g.ugly_below ? "Ugly" : "Bad";
-  return {W, space, people:share, index, headline:pct, peoplePct:sp*100, ratio, grade};
+  return {W, space, people:share, index, headline:pct, peoplePct:sp*100, ratio, grade, idle:(space.parked+space.other)*100, lanesPaper:cw/3.25, lanesMoving:cwm/3.25};
 }
 
 const gradeBadge = g => `<span class="badge b-${g[0].toLowerCase()}">${g}</span>`;
@@ -314,7 +327,8 @@ function detail(){
   document.getElementById("dTitle").textContent = `${rd.name}, ${rd.city}`;
   document.getElementById("dGrade").innerHTML = gradeBadge(r.grade);
   const st = rd.group==="pune" ? `<span class="badge b-src">measured · ITDP 2022</span>ITDP score ${rd.itdp_score} · right of way ${rd.row_m} m` : `<span class="badge b-ass">${rd.status}</span>right of way ${rd.row_m} m`;
-  document.getElementById("dMeta").innerHTML = `${st} · ${Math.round(r.headline)}% of the street for walking, cycling &amp; buses, used by ${Math.round(r.peoplePct)}% of people. ${ratioText(r)}`;
+  const sq = r.lanesPaper > 0 ? ` Traffic lanes: ${r.lanesPaper.toFixed(1)} on paper${r.lanesMoving < r.lanesPaper-0.05 ? ` → <b>${r.lanesMoving.toFixed(1)}</b> left for moving traffic` : ""}.` : "";
+  document.getElementById("dMeta").innerHTML = `${st} · ${Math.round(r.headline)}% of the street for walking, cycling &amp; buses, used by ${Math.round(r.peoplePct)}% of people. ${ratioText(r)} <b>${Math.round(r.idle)}%</b> of the street moves nobody (parked vehicles, unusable or other).${sq}`;
   bar(document.getElementById("dSpace"), r.space);
   bar(document.getElementById("dPeople"), r.people);
   idx(document.getElementById("dIdx"), r);
@@ -329,14 +343,13 @@ function buildSliders(){
     const el = document.getElementById("sl"+i);
     el.addEventListener("input", ()=>{
       const v = parseFloat(el.value); MODEL[g][k] = v;
-      if (g==="parking_split") MODEL.parking_split.two_wheeler = +(1-v).toFixed(2);
       document.getElementById("slo"+i).textContent = fmt(v);
       document.getElementById("slrow"+i).classList.toggle("changed", Math.abs(v-BASE[g][k])>1e-9);
       redrawAll();
     });
   });
 }
-function resetAll(){ ["occupancy","pcu","parking_split"].forEach(g=> MODEL[g] = JSON.parse(JSON.stringify(BASE[g]))); buildSliders(); redrawAll(); }
+function resetAll(){ ["occupancy","pcu","scenario"].forEach(g=> MODEL[g] = JSON.parse(JSON.stringify(BASE[g]))); buildSliders(); redrawAll(); }
 function redrawAll(){ league(); detail(); if (document.getElementById("w_footpath")) drawCalc(); }
 
 function readCalc(){
@@ -359,7 +372,7 @@ function drawCalc(){
   const r = compute({widths_m:st.widths, mode_share:st.ms, usable:{footpath:st.usable, cycle_track:st.usable}}, MODEL, false);
   document.getElementById("c_width").innerHTML = `${W.toFixed(1)} m kerb to kerb · ${gradeBadge(r.grade)} ${Math.round(r.headline)}% for walking, cycling &amp; buses`;
   bar(document.getElementById("cSpace"), r.space); bar(document.getElementById("cPeople"), r.people); idx(document.getElementById("cIdx"), r);
-  document.getElementById("cVerdict").textContent = ratioText(r);
+  document.getElementById("cVerdict").textContent = ratioText(r) + ` ${Math.round(r.idle)}% of the street moves nobody.` + (r.lanesMoving < r.lanesPaper-0.05 ? ` Traffic lanes: ${r.lanesPaper.toFixed(1)} → ${r.lanesMoving.toFixed(1)} after parking on the carriageway.` : "");
   const q = new URLSearchParams({ template:"road-request.yml", title:`Road analysis: ${st.road||"my road"}, ${st.city||"my city"}`, city:st.city, road:st.road,
     widths: WF.map(([k,l])=>`${l}: ${st.widths[k]} m`).join("\n") + `\nFootpath usable: ${Math.round(st.usable*100)}%`,
     mode_share: SF.map(([k,l])=>`${l}: ${st.ms[k]}%`).join("\n"),
@@ -402,6 +415,9 @@ async function init(){
   document.querySelectorAll("#widthInputs input,#shareInputs input,#c_city,#c_road,#c_usable").forEach(el=>el.addEventListener("input", drawCalc));
   buildSliders();
   document.getElementById("resetBtn").onclick = resetAll;
+  const setInf = v => { const i = SL.findIndex(s=>s[1]==="informal"); const el = document.getElementById("sl"+i); el.value = v; el.dispatchEvent(new Event("input")); };
+  document.getElementById("squeezeBtn").onclick = ()=>{ setInf(2.5); sel = "karve-road"; redrawAll(); document.getElementById("league").scrollIntoView({behavior:"smooth", block:"start"}); };
+  document.getElementById("unsqueezeBtn").onclick = ()=>{ setInf(0); redrawAll(); };
   drawCalc();
   if (fromHash) document.getElementById("c_city").scrollIntoView({behavior:"smooth"});
   document.getElementById("shareBtn").onclick = async ()=>{

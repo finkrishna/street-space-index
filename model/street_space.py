@@ -9,8 +9,10 @@ For each road:
   people share = % of people moved by each mode
   index        = space share / people share        (1.0 = fair share)
   headline     = % of usable street width serving walking, cycling and buses/metro
-  ratio        = street per person in a motor vehicle ÷ street per person walking,
-                 cycling or on a bus  (1.0 = even)
+  ratio        = street per person in a motor vehicle (incl. parked storage) ÷ street
+                 per person walking, cycling or on a bus  (1.0 = even)
+  idle         = % of street that moves nobody: parked vehicles + unusable/other width
+  --informal M = parking on traffic lanes, M metres per side (the "1.5-lane squeeze")
 
 Demand comes from measured counts where we have them (Pune: ITDP 2022 peak-hour
 counts; Copenhagen: daily counts) and from mode share otherwise.
@@ -28,7 +30,9 @@ import argparse, csv, json, os, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_MODEL = os.path.join(HERE, "..", "data", "model.json")
 GROUPS = [("walk", "Walk"), ("cycle", "Cycle"), ("pt", "Bus + metro"), ("ipt", "Auto + cab"),
-          ("tw", "Two-wheeler"), ("car", "Car"), ("goods", "Goods vehicles"), ("other", "Other / unusable")]
+          ("tw", "Two-wheeler"), ("car", "Car"), ("goods", "Goods vehicles"),
+          ("parked", "Parked vehicles"), ("other", "Other / unusable")]
+LANE_M = 3.25  # metres per traffic lane, for the "lanes left" figure
 PEOPLE = ["walk", "cycle", "pt", "ipt", "tw", "car"]
 
 
@@ -59,7 +63,7 @@ def demand(road, m):
     return people, veh
 
 
-def compute(road, m, as_drawn=False):
+def compute(road, m, as_drawn=False, informal=0.0):
     w = road["widths_m"]
     W = sum(w.values())
     if W <= 0:
@@ -72,24 +76,28 @@ def compute(road, m, as_drawn=False):
     lane = {k: veh[k] * pcu[k] for k in modes}
     tot = sum(lane.values())
     s = {k: (lane.get(k, 0) / tot if tot else 0) for k in ["two_wheeler", "car", "ipt", "goods", "bus"]}
-    ps = road.get("parking_split") or m["parking_split"]
     fp, ct, cw, pk = w.get("footpath", 0), w.get("cycle_track", 0), w.get("carriageway", 0), w.get("parking", 0)
+    # Informal parking on traffic lanes (metres per side). Applied to Indian streets only;
+    # world reference streets are assumed to have enforced kerbs.
+    inf = 0.0 if road.get("group") == "world" else min(cw, 2 * max(0.0, informal))
+    cwm = cw - inf  # width left for moving vehicles
     space = {
         "walk": fp * u["footpath"] / W,
         "cycle": ct * u["cycle_track"] / W,
-        "pt": (w.get("bus_lane", 0) + cw * s["bus"]) / W,
-        "ipt": cw * s["ipt"] / W,
-        "tw": (cw * s["two_wheeler"] + pk * ps.get("two_wheeler", 0)) / W,
-        "car": (cw * s["car"] + pk * ps.get("car", 0)) / W,
-        "goods": cw * s["goods"] / W,
+        "pt": (w.get("bus_lane", 0) + cwm * s["bus"]) / W,
+        "ipt": cwm * s["ipt"] / W,
+        "tw": cwm * s["two_wheeler"] / W,
+        "car": cwm * s["car"] / W,
+        "goods": cwm * s["goods"] / W,
+        "parked": (pk + inf) / W,
     }
-    space["other"] = 1 - sum(space.values())
+    space["other"] = max(0.0, 1 - sum(space.values()))
     P = sum(people[k] for k in PEOPLE) or 1
     share = {k: (people[k] / P if k in PEOPLE else 0) for k in space}
     index = {k: (space[k] / share[k] if share[k] else None) for k in space}
     sust_space = space["walk"] + space["cycle"] + space["pt"]
     sust_people = share["walk"] + share["cycle"] + share["pt"]
-    motor_space = space["car"] + space["tw"] + space["ipt"]
+    motor_space = space["car"] + space["tw"] + space["ipt"] + space["parked"]  # parked = private storage
     motor_people = share["car"] + share["tw"] + share["ipt"]
     ratio = ((motor_space / motor_people) / (sust_space / sust_people)
              if motor_people and sust_space and sust_people else 0.0)
@@ -97,7 +105,9 @@ def compute(road, m, as_drawn=False):
     pct = sust_space * 100
     grade = "Good" if pct >= g["good_min"] else "Ugly" if pct < g["ugly_below"] else "Bad"
     return {"width_m": W, "space": space, "people": share, "index": index, "headline": pct,
-            "people_pct": sust_people * 100, "ratio": ratio, "grade": grade}
+            "people_pct": sust_people * 100, "ratio": ratio, "grade": grade,
+            "moves_nobody_pct": (space["parked"] + space["other"]) * 100,
+            "lanes_paper": cw / LANE_M, "lanes_moving": cwm / LANE_M}
 
 
 def main():
@@ -105,6 +115,8 @@ def main():
     ap.add_argument("--model", default=DEFAULT_MODEL)
     ap.add_argument("--road", help="JSON file with one road (same shape as an entry in model.json 'roads')")
     ap.add_argument("--as-drawn", action="store_true", help="count all drawn footpath/cycle width as usable")
+    ap.add_argument("--informal", type=float, default=0.0, metavar="M",
+                    help="informal parking on traffic lanes, metres per side (Indian streets), e.g. 2.5")
     ap.add_argument("--set", action="append", default=[], metavar="GROUP.KEY=VALUE",
                     help="override an assumption, e.g. --set occupancy.car=1.4 --set pcu.bus=2.2")
     ap.add_argument("--csv", help="write results to this CSV path")
@@ -124,16 +136,18 @@ def main():
     if a.road:
         with open(a.road, encoding="utf-8") as f:
             roads = [json.load(f)]
-    step(1, 3, f"{len(roads)} road(s), {'as drawn' if a.as_drawn else 'as actually usable'}")
+    step(1, 3, f"{len(roads)} road(s), {'as drawn' if a.as_drawn else 'as actually usable'}"
+               f"{f', informal parking {a.informal} m/side' if a.informal else ''}")
 
-    res = [(r, compute(r, m, a.as_drawn)) for r in roads]
+    res = [(r, compute(r, m, a.as_drawn, a.informal)) for r in roads]
     res.sort(key=lambda x: -x[1]["headline"])
     print("\n  street space for walking, cycling & buses vs the people they carry")
-    print(f"  {'street':28s}{'city':12s}{'street':>7s}{'people':>8s}{'ratio':>7s}  grade")
+    print(f"  {'street':28s}{'city':12s}{'street':>7s}{'people':>8s}{'ratio':>7s}  {'grade':6s}{'idle':>6s}  lanes")
     rows = []
     for r, x in res:
         i = x["index"]
-        print(f"  {r['name'][:27]:28s}{r.get('city', '')[:11]:12s}{x['headline']:6.0f}%{x['people_pct']:7.0f}%{x['ratio']:6.1f}×  {x['grade']}")
+        print(f"  {r['name'][:27]:28s}{r.get('city', '')[:11]:12s}{x['headline']:6.0f}%{x['people_pct']:7.0f}%{x['ratio']:6.1f}×  "
+              f"{x['grade']:6s}{x['moves_nobody_pct']:5.0f}%  {x['lanes_paper']:.1f}→{x['lanes_moving']:.1f}")
         for k, label in GROUPS:
             rows.append([r["name"], r.get("city", ""), label, round(x["space"][k] * 100, 1),
                          round(x["people"][k] * 100, 1), None if i[k] is None else round(i[k], 2),

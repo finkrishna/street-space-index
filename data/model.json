@@ -1,6 +1,6 @@
 {
   "_about": "Single source of truth for the Street Space Index. Both index.html and model/street_space.py read this file. Every number is either sourced (see 'sources') or an explicit, adjustable assumption.",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "updated": "2026-11-25",
   "mode_share_pct": {
     "walk": 26,
@@ -978,6 +978,10 @@
       "url": "https://itdp.in/pune-streets-impact-assessment/"
     },
     {
+      "claim": "ITDP: parked vehicles are a main cause of unusable footpaths; recommends Area Level Parking Plans and on-street parking operators (report pp. 10, 77-78)",
+      "url": "https://itdp.in/resource/punes-walk-cycle-analysis/"
+    },
+    {
       "claim": "Pune RTO: 43.5 lakh vehicles (≈30 lakh 2W, 9 lakh cars, 1.4 lakh autos, 22,000 buses)",
       "url": "https://www.freepressjournal.in/amp/pune/rising-vehicle-numbers-push-pune-towards-3-letter-registration-system-all-you-need-to-know"
     },
@@ -1038,5 +1042,9 @@
     "_note": "Headline = share of usable street width serving walking, cycling and buses/metro. Second number = fairness ratio: street per person in a motor vehicle (car, two-wheeler, auto) ÷ street per person walking, cycling or on a bus.",
     "good_min": 50,
     "ugly_below": 20
+  },
+  "scenario": {
+    "_note": "Informal parking on traffic lanes, metres per side, applied to Indian streets (world streets assumed enforced). 0 = the street as ITDP drew it. ~2.5 m per side = one lane of parked cars each side, the '1.5-lane squeeze'. Parking on footpaths and cycle tracks is already inside ITDP's observed usability.",
+    "informal": 0
   }
 }

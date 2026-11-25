@@ -17,7 +17,7 @@ Every street is a fixed amount of width. Two numbers tell you who it's built for
 1. **What share of the street, usable today, serves people walking, cycling or riding a bus?** This is the headline. It's mostly measured width, so it depends little on assumptions.
 2. **Space per person:** how much street a person in a car, two-wheeler or auto gets, compared with a person walking, cycling or on a bus. 1.0× is even.
 
-## Good, bad and ugly (v0.3)
+## Good, bad and ugly (v0.4, streets as ITDP drew them)
 
 | Street | City | Street for walking, cycling & buses | People who travel that way | Motor ÷ sustainable space per person | Grade | ITDP score |
 |---|---|---|---|---|---|---|
@@ -91,6 +91,33 @@ Raw transcribed counts (AM and PM separately) are in [`data/model.json`](data/mo
 - **Adjust the assumptions.** Sliders for people per vehicle, lane space per vehicle (PCU) including goods vehicles, and parking. Every chart updates live.
 - **Check your own road.** Enter any street's cross-section and your city's travel shares, then get the grade and ratio instantly. *Copy link* reproduces your road; *Ask for a deeper analysis* opens a pre-filled [request](../../issues/new?template=road-request.yml).
 
+## Parking: the hidden width tax
+
+Pune builds wide roads, and buildings are approved on the strength of that width. Then one lane on each side fills with office parking and another with delivery and short-stay vehicles. A wide road ends up working like a **1.5-lane squeeze**, often outside commercial buildings whose sanctioned parking sits underused. Parked vehicles move nobody, but they take width from everyone: pedestrians, two-wheelers, buses and cars.
+
+**What's already in the numbers:** parking on footpaths and cycle tracks. ITDP found parked vehicles are a main reason 30% of audited footpath length is "present but unusable", and 1 in 4 people surveyed on several streets reported low visibility because of parked vehicles. That's inside the "as usable today" figures.
+
+**What wasn't, until v0.4:** parking on the traffic lanes. ITDP drew the lanes clear. The site and model now have a **parked-vehicles layer**:
+
+- Formal parking lanes and any informal parking on the carriageway are shown as their own block, *Parked vehicles*, which moves nobody.
+- A slider (and `--informal M` in the Python model) sets how many metres per side of traffic lane parking takes on Indian streets. World reference streets are assumed to be enforced.
+- Two new numbers: **% of the street that moves nobody** (parked plus unusable or other) and **traffic lanes on paper → lanes left for moving traffic**.
+
+With 2.5 m of parking each side (about one lane of parked cars):
+
+| Street | Lanes on paper → left | Street moving nobody | Motor ÷ sustainable space per person |
+|---|---|---|---|
+| Karve Road | 4.6 → **3.1** (≈1.5 per direction) | 30% → **48%** | 3.3× |
+| Sinhagad Road | 5.5 → 4.0 | 35% → **50%** | 1.2× |
+| Shankarsheth Road | 5.5 → 4.0 | 31% → 47% | 2.7× → 2.8× |
+| Vishrantwadi Road | 6.9 → 5.4 | 22% → 39% | 6.1× → **7.4×** |
+
+The headline (share of street for walking, cycling and buses) barely moves, because carriageway parking mostly eats motor-vehicle width. What changes is how much of the street moves anyone at all. Where buses share the lanes, they lose space too, so Vishrantwadi drops from 9% to 7%. On Karve Road under this scenario, every moving mode falls below its fair share, cars and two-wheelers included. Parking squeezes everyone.
+
+**ITDP's own recommendation:** active enforcement under the parking policy, and *"Area Level Parking Plans"* with *"on-street parking operators"*, starting on the redesigned streets. A companion idea from the author, to be published separately: price kerbside parking outside commercial buildings well above the cost of their own sanctioned parking, audit and restore that internal parking, and judge operators on kerb space recovered, not revenue collected. The goal is to get the roads back, not to monetise them.
+
+**Caveat:** a single uniform figure for every street is crude. JM Road, for one, has managed parking. Measured kerb-occupancy counts per street would replace this scenario.
+
 ## The approach
 
 ```
@@ -112,7 +139,8 @@ ratio             = [space ÷ people] for car, two-wheeler, auto  ÷  [space ÷ 
 3. **Bus occupancy drives the bus numbers.** One bus at 40 people outweighs dozens of cars. Test it with the slider.
 4. **World streets are illustrative.** Only Nørrebrogade has published counts.
 5. **One section per street.** ITDP drew one representative cross-section per street; real widths vary block by block. Footpath usability is the share of length, applied to width.
-6. **Transcription.** Small labels on ITDP's section diagrams were read from high-resolution renders. Total widths were checked against each street's stated right of way.
+6. **Parking on traffic lanes isn't measured.** The parking slider is a uniform scenario, not an observation.
+7. **Transcription.** Small labels on ITDP's section diagrams were read from high-resolution renders. Total widths were checked against each street's stated right of way.
 
 ## Repo layout
 
@@ -126,6 +154,7 @@ ratio             = [space ÷ people] for car, two-wheeler, auto  ÷  [space ÷ 
 ```bash
 python3 model/street_space.py                         # ranking, as usable today
 python3 model/street_space.py --as-drawn              # as drawn on paper
+python3 model/street_space.py --informal 2.5          # add 2.5 m/side of parking on traffic lanes
 python3 model/street_space.py --set occupancy.bus=25 --set pcu.two_wheeler=0.5
 python3 model/street_space.py --road my_road.json --csv out.csv
 ```
@@ -143,11 +172,13 @@ Run the site locally: `python3 -m http.server`, then open http://localhost:8000.
 
 ## Progress
 
-`██████████████░░░░░░ 70%`
+`███████████████░░░░░ 75%`
 
 - [x] Method, city context, adjustable assumptions, check-your-road calculator, request form
 - [x] 11 Pune streets from ITDP measurements (sections, counts, usability)
 - [x] 4 world reference streets (Paris, Copenhagen, Amsterdam, New York)
+- [x] Parked-vehicles layer: informal parking on traffic lanes, lanes left, share of street moving nobody
+- [ ] Measured kerb-parking occupancy per street
 - [ ] Block-by-block widths and all-day counts
 - [ ] Measured cross-sections for the world streets
 - [ ] More Indian cities, from your requests
