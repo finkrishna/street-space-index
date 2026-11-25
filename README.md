@@ -14,7 +14,7 @@ It starts with three roads in Pune. It's built so that anyone can check their ow
 
 ## Where this came from
 
-A post by **[The Better India](https://x.com/thebetterindia)** about Gangtok asked: *what if Indian cities were designed for people, not just vehicles?* It showed Gangtok's footpaths with protective railings, tactile tiles, solar studs and underground utility cables. That post started this project. Thank you to The Better India for highlighting the story.
+A [post](https://x.com/thebetterindia/status/2125237544464044524) by **[The Better India](https://x.com/thebetterindia)** about Gangtok asked: *what if Indian cities were designed for people, not just vehicles?* It showed Gangtok's footpaths with protective railings, tactile tiles, solar studs and underground utility cables. That post started this project. Thank you to The Better India for highlighting the story.
 
 Checking it led to a sharper question. Gangtok's 12 km retrofit puts utility cables in ducts under the footpath, so the footpath doesn't have to be dug up again and again. Before copying that anywhere, though, we wanted to know **who the street is currently built for**. Pune, a city with roughly as many registered vehicles as people, seemed a good place to measure.
 
