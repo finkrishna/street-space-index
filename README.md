@@ -1,142 +1,176 @@
 # Who gets the street? — Street Space Index
 
-[![Karve Road, Pune: cars get 1.67× their fair share of street width; walkers 0.57×; bus riders 0.12×](docs/preview.png)](https://finkrishna.github.io/street-space-index/)
+[![How much of each street serves people walking, cycling or on buses: Paris, Copenhagen, Amsterdam and New York above 50%; Pune streets from 38% (JM Road) down to 9% (Vishrantwadi Road)](docs/preview.png)](https://finkrishna.github.io/street-space-index/)
 
-**▶ Try it live:** https://finkrishna.github.io/street-space-index/ — switch roads, move the assumption sliders, check your own street.
+**▶ Try it live:** https://finkrishna.github.io/street-space-index/ — click any street, flip between "as usable today" and "as drawn", move the assumption sliders, check your own road.
 
-> **This is not a definitive study.** It's an invitation to analysts, planners, students and curious citizens to approach a shared problem systematically: how should dense Indian cities allocate a scarce common good, street space, among the people who need it? Every number here can be checked, challenged and replaced. Better data and sharper methods are the point.
+> **This is not a definitive study.** It's an invitation to analysts, planners, students and curious citizens to approach a shared problem systematically: how should dense Indian cities allocate a scarce common good, street space, among the people who use it? Every number here can be checked, challenged and replaced. Better data and sharper methods are the point.
 
-Every street is a fixed amount of width. Pedestrians, cyclists, bus riders, two-wheelers and cars all share it. This project asks a simple question with an uncomfortable answer:
-
-> **How much of the street does each group get, compared with how many people each group actually moves?**
-
-It starts with three roads in Pune. It's built so that anyone can check their own road, change the assumptions, and ask for a deeper analysis.
+> **Standing on ITDP India's shoulders.** The Pune half of this project is built on measured data from **[Pune's Walk & Cycle Analysis](https://itdp.in/resource/punes-walk-cycle-analysis/)** by the Institute for Transportation and Development Policy (ITDP) India with Pune Municipal Corporation (PMC), December 2022. Their cross-sections, traffic counts and footpath observations are what make the Pune results real rather than guessed. [More below.](#the-itdp-india--pmc-study-this-is-built-on)
 
 ---
 
-## Where this came from
+## The question
 
-A [post](https://x.com/thebetterindia/status/2125237544464044524) by **[The Better India](https://x.com/thebetterindia)** about Gangtok asked: *what if Indian cities were designed for people, not just vehicles?* It showed Gangtok's footpaths with protective railings, tactile tiles, solar studs and underground utility cables. That post started this project. Thank you to The Better India for highlighting the story.
+Every street is a fixed amount of width. Two numbers tell you who it's built for:
 
-Checking it led to a sharper question. Gangtok's 12 km retrofit puts utility cables in ducts under the footpath, so the footpath doesn't have to be dug up again and again. Before copying that anywhere, though, we wanted to know **who the street is currently built for**. Pune, a city with roughly as many registered vehicles as people, seemed a good place to measure.
+1. **What share of the street, usable today, serves people walking, cycling or riding a bus?** This is the headline. It's mostly measured width, so it depends little on assumptions.
+2. **Space per person:** how much street a person in a car, two-wheeler or auto gets, compared with a person walking, cycling or on a bus. 1.0× is even.
 
-## What we found (v0.2)
+## Good, bad and ugly (v0.3)
 
-| Road | Walkers get | Cars get | Bus riders get |
-|---|---|---|---|
-| JM Road (redesigned) | **1.25×** their share | 1.31× | 0.06× |
-| Karve Road | **0.57×** | **1.67×** | 0.12× |
-| Satara Road (BRT) | **0.49×** | 1.42× | 1.52× |
+| Street | City | Street for walking, cycling & buses | People who travel that way | Motor ÷ sustainable space per person | Grade | ITDP score |
+|---|---|---|---|---|---|---|
+| Rue de Rivoli | Paris * | **93%** (as drawn 93%) | 90% | no private-car lane | Good | – |
+| Nørrebrogade | Copenhagen * | **67%** (as drawn 67%) | 73% | 1.0× | Good | – |
+| Jodenbreestraat | Amsterdam * | **57%** (as drawn 57%) | 90% | 2.9× | Good | – |
+| 9th Avenue (34th–50th) | New York * | **53%** (as drawn 53%) | 85% | 4.6× | Good | – |
+| JM Road | Pune | **38%** (as drawn 42%) | 34% | 0.4× | Bad | 25.5/30 |
+| Satara Road | Pune | **33%** (as drawn 42%) | 66% | 3.0× | Bad | 19.5/30 |
+| Pune–Solapur Road | Pune | **26%** (as drawn 41%) | 41% | 1.3× | Bad | 13.5/30 |
+| Nagar Road | Pune | **21%** (as drawn 28%) | 39% | 1.8× | Bad | 13/30 |
+| Raj Bhavan Road | Pune | **17%** (as drawn 29%) | 30% | 1.4× | Ugly | 21/30 |
+| Karve Road | Pune | **15%** (as drawn 18%) | 47% | 3.3× | Ugly | 15.5/30 |
+| Shankarsheth Road | Pune | **14%** (as drawn 33%) | 39% | 2.7× | Ugly | 10.5/30 |
+| Sinhagad Road | Pune | **12%** (as drawn 25%) | 18% | 1.2× | Ugly | 12.5/30 |
+| Pashan Road | Pune | **11%** (as drawn 22%) | 29% | 2.5× | Ugly | 12.5/30 |
+| Magarpatta–Mundhwa Road | Pune | **10%** (as drawn 19%) | 36% | 4.0× | Ugly | 7/30 |
+| Vishrantwadi Road | Pune | **9%** (as drawn 21%) | 45% | 6.1× | Ugly | 8/30 |
 
-*1.0× = a fair share: the group's share of street width equals its share of trips. These figures use the city-average mode share with all footpath width counted as usable.*
+\* World streets are **illustrative**: widths estimated from published descriptions and mode shares from city-level patterns, except Nørrebrogade, which uses published daily counts. They're there for scale, so you can look at a Pune street and think "hmm, that makes sense".
+Grades: **Good** 50%+ of the street for walking, cycling and buses · **Bad** 20–50% · **Ugly** under 20%.
 
-- **Karve Road is the typical pattern.** Cars get about 1.7× their share of the street. Walkers and bus riders are squeezed.
-- **JM Road shows it can be reversed without widening anything.** Organising parking freed width for footpaths and a cycle track. ITDP's 2022 audit ranked it the best of 11 streets.
-- **Satara Road is the trap in this metric.** The BRT gives buses more than their share of width, but space given isn't space used. Buses have run below capacity.
-- **Under ITDP's corridor evidence the gap widens sharply.** Use the corridor survey split (32% walk, 40% public transport) and count only half the footpath width as usable, reflecting encroachment. On Karve Road, cars then get about **3.3×** their share and walkers about **0.26×**.
+What stands out:
+
+- **Every Pune street gives walking, cycling and buses less than 40% of its width.** The world reference streets all give them more than half.
+- **Encroachment roughly halves what Pune has built.** Shankarsheth Road gives these modes 33% of its width on paper and 14% in practice. Pashan, Sinhagad, Magarpatta and Vishrantwadi roads lose about half too. ITDP found 30% of audited length has footpaths that exist but can't be used.
+- **Vishrantwadi Road is the ugliest.** 45% of the people on it walk, cycle or ride a bus, but they get 9% of the usable street. A person in a motor vehicle gets about 6× the space.
+- **JM Road is Pune's proof that it can be done.** It's the only Pune street where walkers, cyclists and bus riders get more than their per-person share. ITDP rated it best, 25.5/30.
+- **New York isn't automatically "good".** 9th Avenue gives 53% of its width to walking, cycling and buses, but 85% of people travel that way. That gap is exactly why NYC DOT is redesigning it with a 9 ft "super sidewalk" in 2026.
+- **Our ranking broadly agrees with ITDP's.** Theirs scores design quality, observed use and perception; ours scores only width allocation. Both put JM Road on top and Magarpatta–Mundhwa and Vishrantwadi at the bottom. They differ on Raj Bhavan Road (21/30 from ITDP, 17% here): it's well designed, but half its footpath isn't usable.
+
+## The ITDP India & PMC study this is built on
+
+[**Pune's Walk & Cycle Analysis**](https://itdp.in/resource/punes-walk-cycle-analysis/) was carried out by ITDP India with Pune Municipal Corporation and released on Pune's Pedestrians' Day, 11 December 2022. As far as we know, it's the most rigorous public assessment of how Pune's main streets actually work.
+
+**What they did:**
+
+- **Scope:** 11 streets with right of way above 24 m, about 30 km, cut into junction-to-junction segments of 0.5–1 km. Both sides were surveyed separately, at morning (9–11am) and evening (5–7pm) peaks, Oct–Nov 2022.
+- **Design survey:** each street assessed against Pune's Urban Street Design Guidelines and IRC standards on ease of movement, safety, universal accessibility and liveability, with a level of service for each segment.
+- **Observation survey:** volume counts of pedestrians, cyclists, cars, two-wheelers, autos, PMPML, school and private buses, and goods vehicles; pedestrian movement patterns, activity and parking mapping; infrastructure condition.
+- **Perception survey:** 2,300 people interviewed, including caregivers, elderly people, people with disabilities and public-transport users.
+
+**What it found** (summarised):
+
+- 30% of surveyed length has footpaths that are present but unusable: parked vehicles, commercial spillover, poor surface, inadequate width, DP boxes, tree pits.
+- On poorly faring streets, up to 80% of people walk off the footpath, on vehicle lanes and cycle tracks.
+- Only 14% of 675 caregivers feel safe letting children walk to school unsupervised.
+- 34% would definitely take up cycling with safer infrastructure, and 28% might.
+- Streets built to Pune's Urban Street Design Guidelines performed better in all three surveys.
+
+**How PMC got there.** Pune has been unusually deliberate about streets for nearly two decades:
+- **2008:** a Comprehensive Mobility Plan set a 2031 goal of 90% of trips by walking, cycling and public transport.
+- **Since then:** Urban Street Design Guidelines, a Pedestrian Policy, a 2017 Bicycle Plan, and annual Pedestrians' Days (Laxmi Road went car-free for a day in 2021).
+- **Budget:** according to ITDP, close to half of the transport budget has gone to sustainable transport since 2016.
+- **2022:** PMC proposed the assessment to check whether that spending was working.
+
+Most cities never measure their own streets this carefully. The study deserves to be far better known.
+
+**What we took from it, for every street:**
+- the drawn cross-section, transcribed from the report's street-section diagrams
+- morning plus evening peak counts of every mode
+- the observed share of the stretch with a usable footpath and usable cycle track
+- ITDP's 30-point score, shown alongside ours
+
+Raw transcribed counts (AM and PM separately) are in [`data/model.json`](data/model.json) under each road's `counts._raw_am_pm`, with the report page cited in each road's `source`. Any transcription errors are ours, not ITDP's.
 
 ## Try it
 
-- **Adjust the assumptions.** Sliders for footpath usability, vehicle occupancy, lane space (PCU) and parking, plus mode-share presets. Every chart updates live.
-- **Check your own road.** Enter the cross-section of any street in any city and get its index instantly. *Copy link* gives you a URL that reopens your road exactly as you set it.
-- **Ask for a deeper analysis.** One click opens a pre-filled [request](../../issues/new?template=road-request.yml) with your numbers already in it. Add photos or measurements and we'll look into it.
+- **Click any street** to see its full split: street width against people moved, mode by mode.
+- **As usable today / as drawn.** Toggle between the observed usable width and what's on paper. The gap is the encroachment.
+- **Adjust the assumptions.** Sliders for people per vehicle, lane space per vehicle (PCU) including goods vehicles, and parking. Every chart updates live.
+- **Check your own road.** Enter any street's cross-section and your city's travel shares, then get the grade and ratio instantly. *Copy link* reproduces your road; *Ask for a deeper analysis* opens a pre-filled [request](../../issues/new?template=road-request.yml).
 
 ## The approach
 
-### 1. Measure the street
-Split the kerb-to-kerb width into six parts: footpaths, cycle track, dedicated bus lane, traffic lanes, parking and medians/other.
-
-### 2. Count the people
-Use trip mode share: what fraction of trips are on foot, by cycle, bus, metro, auto/cab, two-wheeler or car.
-
-### 3. Divide the shared lanes fairly
-Traffic lanes are shared, so headcount isn't the right way to split them. We split them by **lane-space demand**:
-
 ```
-lane demand(mode) = trips(mode) ÷ occupancy(mode) × PCU(mode)
+people(mode)      = count(mode) × occupancy(mode)              # or city mode share where no counts exist
+lane share(mode)  = count × PCU ÷ Σ(count × PCU)               # shared lanes split by road space used
+space(mode)       = [dedicated width × usable + lanes × lane share + parking share] ÷ total width
+headline          = space(walk) + space(cycle) + space(bus/metro)
+ratio             = [space ÷ people] for car, two-wheeler, auto  ÷  [space ÷ people] for walk, cycle, bus
 ```
 
-*Occupancy* converts trips into vehicles. *PCU* (passenger car unit) converts vehicles into road space: a bus takes about 3 cars' worth, a two-wheeler about 0.75. If a road has a dedicated bus lane, buses are removed from the shared lanes. Parking is split between cars and two-wheelers.
-
-Footpath width is multiplied by a **usable fraction**. The unusable part (encroached or obstructed) counts as non-movement space.
-
-### 4. Compare
-```
-space share(mode) = width serving that mode ÷ total width
-index(mode)       = space share(mode) ÷ trip share(mode)
-```
-Above 1.0, the group has more street than its riders. Below 1.0, it's squeezed. Metro trips count in the people share but use no road surface, which is why elevated rail lowers the transit index on a road without lowering anyone's mobility.
+- **Usable** is ITDP's observed share of the stretch with a usable footpath or cycle track. The unusable remainder is shown as "Other / unusable".
+- **Buses** move out of shared lanes when a street has a bus lane. **Goods vehicles** take lane space but carry no counted people.
+- **Metro and subway** riders count as people but use no road surface. That's why elevated or underground rail makes the bus-and-metro share look over-served on very little width.
 
 ## What could make this wrong
 
-We lead with these before anyone relies on the numbers:
+1. **Counts are taken at one point.** Walking trips are short, so fewer walkers pass any single point than vehicles on long trips. A count measures flow through the street, not everyone who uses it.
+2. **Today's counts hide suppressed demand.** Pune's cycle tracks show indices of 10–50× (massively "over-served") because ITDP counted only a few dozen cyclists on 3–4 m tracks. That says the tracks are blocked or disconnected (34% would cycle if it were safe), not that cyclists have too much space.
+3. **Bus occupancy drives the bus numbers.** One bus at 40 people outweighs dozens of cars. Test it with the slider.
+4. **World streets are illustrative.** Only Nørrebrogade has published counts.
+5. **One section per street.** ITDP drew one representative cross-section per street; real widths vary block by block. Footpath usability is the share of length, applied to width.
+6. **Transcription.** Small labels on ITDP's section diagrams were read from high-resolution renders. Total widths were checked against each street's stated right of way.
 
-1. **Registered isn't on the road.** RTO totals rarely remove scrapped vehicles. Only about 38% of Pune's 26 lakh pre-2019 vehicles have fitted the mandatory high-security plates, which suggests many old registrations are no longer driven.
-2. **City averages aren't corridor reality.** The ITDP corridor survey (32% walk, 40% public transport) differs a lot from the city average. A perception survey also probably over-represents walkers and bus riders.
-3. **Drawn width isn't usable width.** That's why the footpath-usable slider exists.
-4. **Space given isn't space used.** An empty bus lane scores well here and still fails.
-5. **PCU is a simplification.** At signals, two-wheelers fill gaps between cars.
-6. **Two of the three cross-sections are assumptions.** Only JM Road's 36 m right of way is sourced. The status of every input is flagged `sourced` or `assumed` in [`data/model.json`](data/model.json).
+## Repo layout
 
-## The ITDP audit
-
-[Pune's Walk & Cycle Analysis](https://itdp.in/resource/punes-walk-cycle-analysis/) (ITDP India with Pune Municipal Corporation, Dec 2022) audited 11 streets wider than 24 m, about 30 km in 500 m segments, and surveyed 2,300 people. Three findings are built into v0.2:
-
-- 70% of streets had footpaths, but **only 30% of pedestrians used them** → the footpath-usable slider.
-- Respondents: **32% walked, 40% used public transport** → the "ITDP 11-corridor" preset.
-- **Ranking:** JM Road best, then Raj Bhavan Road and Satara Road. Magarpatta–Mundhwa, Vishrantwadi and Shankarsheth roads lowest.
-
-The audit scores design *quality* and this index scores width *share*. They agree on JM Road and diverge on Satara Road. **Not yet used:** the report's per-street measurements. The full PDF couldn't be retrieved for v0.2; replacing the assumed Karve and Satara cross-sections with it is the next step.
-
-## How the chart is built
-
-No charting library. Every bar is a row of plain HTML `<div>`s, and each segment's `flex-basis` is set to its percentage, so the bars are exact, accessible and print cleanly.
-
-- [`data/model.json`](data/model.json) is the **single source of truth**: mode shares, occupancy, PCU, parking split, footpath usability, road cross-sections, ITDP findings and sources.
-- [`index.html`](index.html) loads that file and runs the arithmetic in about 30 lines of JavaScript (`compute()`). Sliders change the in-memory copy and redraw. Your road is saved in the URL (`#road=…`), so a shared link reproduces it exactly.
-- [`model/street_space.py`](model/street_space.py) implements **the same arithmetic** in standard-library Python, so every number on the site can be reproduced and audited.
+| Path | What |
+|---|---|
+| [`index.html`](index.html) | The site. Plain HTML/CSS/JS, no libraries; every bar is a `div` sized by percentage. |
+| [`data/model.json`](data/model.json) | **Single source of truth:** roads, widths, counts, usability, assumptions, sources. |
+| [`model/street_space.py`](model/street_space.py) | Standard-library Python implementing the same arithmetic, so every number on the site is reproducible. |
+| [`.github/ISSUE_TEMPLATE/road-request.yml`](.github/ISSUE_TEMPLATE/road-request.yml) | The "analyse my road" request form. |
 
 ```bash
-python3 model/street_space.py                                 # the three Pune roads
-python3 model/street_space.py --preset itdp_corridors --usable 0.5
-python3 model/street_space.py --set occupancy.car=1.3 --set pcu.bus=2.2
+python3 model/street_space.py                         # ranking, as usable today
+python3 model/street_space.py --as-drawn              # as drawn on paper
+python3 model/street_space.py --set occupancy.bus=25 --set pcu.two_wheeler=0.5
 python3 model/street_space.py --road my_road.json --csv out.csv
 ```
 
-A road file looks like this:
+A road file with counts (vehicles per period, people for pedestrians and cyclists) looks like this:
 ```json
 { "name": "MG Road", "city": "Bengaluru",
-  "widths_m": { "footpath": 6, "cycle_track": 0, "bus_lane": 0, "carriageway": 18, "parking": 2, "other": 2 } }
+  "widths_m": { "footpath": 6, "cycle_track": 0, "bus_lane": 0, "carriageway": 18, "parking": 2, "other": 2 },
+  "usable": { "footpath": 0.6 },
+  "counts": { "pedestrians": 3000, "cyclists": 50, "cars": 2500, "two_wheelers": 6000, "autos": 900, "buses": 120, "goods": 200 } }
 ```
+Without counts, give `"mode_share": {"walk": 26, "cycle": 3, "bus": 10, "metro": 1, "ipt": 10, "two_wheeler": 37, "car": 13}` instead.
 
-Run locally: `python3 -m http.server` in the repo folder, then open http://localhost:8000.
+Run the site locally: `python3 -m http.server`, then open http://localhost:8000.
 
 ## Progress
 
-`██████████░░░░░░░░░░ 50%`
+`██████████████░░░░░░ 70%`
 
-- [x] Method, city context, three Pune roads
-- [x] Adjustable assumptions, check-your-road calculator, request form
-- [x] ITDP audit findings (footpath use, corridor users, ranking)
-- [ ] Per-street widths from the full ITDP report
-- [ ] Corridor traffic counts instead of city averages
-- [ ] More cities, from your requests
+- [x] Method, city context, adjustable assumptions, check-your-road calculator, request form
+- [x] 11 Pune streets from ITDP measurements (sections, counts, usability)
+- [x] 4 world reference streets (Paris, Copenhagen, Amsterdam, New York)
+- [ ] Block-by-block widths and all-day counts
+- [ ] Measured cross-sections for the world streets
+- [ ] More Indian cities, from your requests
+
+## Where this came from
+
+A [post](https://x.com/thebetterindia/status/2125237544464044524) by **[The Better India](https://x.com/thebetterindia)** about Gangtok asked: *what if Indian cities were designed for people, not just vehicles?* It showed Gangtok's footpaths with protective railings, tactile tiles, solar studs and underground utility cables. That post started this project; thank you to The Better India for highlighting the story. Checking Gangtok's 12 km retrofit (utility ducts under the footpath, so it isn't dug up again and again) led to a sharper question: before copying it, who is the street currently built for?
 
 ## Contribute
 
-- **Analyse a road:** open the [request form](../../issues/new?template=road-request.yml), or use *Ask for a deeper analysis* on the site.
-- **Fix a number:** if you have a measured cross-section or a traffic count, open an issue with the source. Sourced numbers replace assumptions.
+- **Analyse a road:** use *Ask for a deeper analysis* on the site, or open the [request form](../../issues/new?template=road-request.yml).
+- **Improve a number:** measured cross-sections and traffic counts, with a source, replace estimates.
 
 ## Sources
 
-All sources, with the claim each one supports, are listed in [`data/model.json`](data/model.json) and at the bottom of the live site. Key ones:
+Every source, with the claim it supports, is in [`data/model.json`](data/model.json) and at the bottom of the live site. Key ones:
 
+- [ITDP India & PMC, Pune's Walk & Cycle Analysis (2022)](https://itdp.in/resource/punes-walk-cycle-analysis/) and [ITDP's write-up of the assessment](https://itdp.in/pune-streets-impact-assessment/)
+- [Nørrebrogade daily counts (UrbanLEDS Copenhagen case story)](https://urban-leds.org/wp-content/uploads/2019/resources/case_studies/UrbanLEDS_case_story_Copenhagen_2015_Web.pdf)
+- [Jodenbreestraat, Amsterdam (BikePortland)](https://bikeportland.org/2013/06/14/observing-jodenbreestraat-a-lively-shopping-street-in-amsterdam-88446)
+- [NYC DOT 9th Avenue 34th–50th St (2026)](https://www.nyc.gov/html/dot/downloads/pdf/9th-ave-34-st-50-st-mar2026.pdf)
 - [Pune RTO vehicle count (Free Press Journal)](https://www.freepressjournal.in/amp/pune/rising-vehicle-numbers-push-pune-towards-3-letter-registration-system-all-you-need-to-know)
-- [Pune region population and vehicles; under-used BRT (Down To Earth)](https://www.downtoearth.org.in/air/how-india-moves-punes-roads-buckle-under-an-explosion-of-two-wheeler-traffic)
-- [PMRDA CMP mode shares (Parisar/PKC)](https://www.pkc.org.in/wp-content/uploads/2025/08/SUSTAINABLE-TRANSPORT.pdf)
-- [ITDP Pune street assessment](https://itdp.in/pune-streets-impact-assessment/) and [report coverage (Punekar News)](https://www.punekarnews.in/pmc-itdp-publish-pune-walk-and-cycle-analysis-report/)
-- [Gangtok footpath retrofit with utility ducts (Gangtok Smart City)](https://smartcitygangtok.com/Our%20Projects.aspx)
 
 ## Licence
 
-Code: MIT. Text and data: CC BY 4.0. Built by Krishna (finkrishna) with Claude.
+Code: MIT. Text and our data compilation: CC BY 4.0. ITDP/PMC data remains theirs; it's reproduced here with attribution for analysis and comment. Built by Krishna (finkrishna) with Claude.

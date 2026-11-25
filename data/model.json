@@ -1,18 +1,16 @@
 {
   "_about": "Single source of truth for the Street Space Index. Both index.html and model/street_space.py read this file. Every number is either sourced (see 'sources') or an explicit, adjustable assumption.",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "updated": "2026-11-25",
-
   "mode_share_pct": {
-    "_note": "Share of daily trips in Pune, approximated from the PMRDA Comprehensive Mobility Plan update (walking ~25%, PMPML ~10%, metro ~1%, auto+cab ~10%) and the 2025-26 cycling figure (3%). Two-wheeler/car split is an assumption.",
-    "walk_cycle": 29,
+    "walk": 26,
+    "cycle": 3,
     "bus": 10,
     "metro": 1,
     "ipt": 10,
     "two_wheeler": 37,
     "car": 13
   },
-
   "occupancy": {
     "_note": "Average persons per vehicle. Assumptions; adjust with local survey data.",
     "two_wheeler": 1.3,
@@ -20,79 +18,941 @@
     "ipt": 1.8,
     "bus": 40
   },
-
   "pcu": {
-    "_note": "Passenger Car Units: how much lane space a vehicle takes relative to a car. Values in the range used in Indian urban practice (IRC:106); treat as adjustable.",
+    "_note": "Passenger Car Units: how much lane space a vehicle takes relative to a car. Values in the range used in Indian urban practice (IRC:106); treat as adjustable. Goods = LCV and trucks combined.",
     "two_wheeler": 0.75,
     "car": 1.0,
     "ipt": 1.2,
-    "bus": 3.0
+    "bus": 3.0,
+    "goods": 2.0
   },
-
-  "footpath_usable": {
-    "_note": "Fraction of drawn footpath width that is actually walkable (not encroached or obstructed). 1.0 = all of it. The ITDP audit found only 30% of pedestrians used footpaths on 11 Pune corridors, which suggests much lower real usability; the unusable part is counted as 'Medians, planters, encroached'.",
-    "value": 1.0
-  },
-
-  "mode_share_presets": {
-    "pune_city": { "label": "Pune city average (PMRDA CMP)", "walk_cycle": 29, "bus": 10, "metro": 1, "ipt": 10, "two_wheeler": 37, "car": 13 },
-    "itdp_corridors": { "label": "ITDP 11-corridor respondents (2022)", "_note": "ITDP surveyed 2,300 people on 11 corridors: 32% walked, 40% used public transport. The remaining 28% is split across 2W/car/auto in Pune's city ratio (assumption). Perception-survey respondents probably over-represent walkers and bus users.", "walk_cycle": 32, "bus": 39, "metro": 1, "ipt": 4.7, "two_wheeler": 17.3, "car": 6 }
-  },
-
   "itdp_audit": {
-    "title": "Pune's Walk & Cycle Analysis (ITDP India + PMC, Dec 2022)",
-    "scope": "11 streets with right of way > 24 m, ~30 km, split into 500 m segments; design, observation and perception surveys; 2,300 people surveyed Oct-Nov 2022 at peak hours",
-    "findings": [
-      "70% of surveyed streets had footpaths, but only 30% of pedestrians used them",
-      "Encroachments and obstructions make footpaths and cycle tracks inaccessible",
-      "Streets built to Pune's Urban Street Design Guidelines performed better in all surveys",
-      "Survey respondents: 32% walked, 40% used public transport"
+    "title": "Pune's Walk & Cycle Analysis (ITDP India with Pune Municipal Corporation, Dec 2022)",
+    "url": "https://itdp.in/resource/punes-walk-cycle-analysis/",
+    "scope": "11 streets with right of way > 24 m, ~30 km, junction-to-junction segments of 0.5–1 km, both sides surveyed separately; design, observation and perception surveys; Oct–Nov 2022, 9–11am and 5–7pm",
+    "what_we_used": [
+      "measured street cross-section for each street",
+      "AM + PM peak counts of pedestrians, cyclists, cars, two-wheelers, autos, buses (PMPML, school, private) and goods vehicles",
+      "observed share of each stretch with a usable footpath and cycle track",
+      "ITDP's 30-point score, shown alongside ours"
     ],
-    "ranking": { "best": ["JM Road", "Raj Bhavan Road", "Satara Road"], "worst": ["Magarpatta-Mundhwa Road", "Vishrantwadi Road", "Shankarsheth Road"] },
-    "not_available_here": "Per-street widths and footpath measurements are in the full PDF, which could not be retrieved programmatically. Road widths below remain assumptions except JM Road."
+    "findings": [
+      "30% of surveyed length has footpaths that are present but unusable (parked vehicles, commercial spillover, poor surface, inadequate width, DP boxes, tree pits)",
+      "On poorly faring streets up to 80% of people walk off the footpath",
+      "Only 14% of 675 caregivers feel safe letting children walk to school unsupervised",
+      "34% would definitely take up cycling with safer infrastructure",
+      "Streets built to Pune's Urban Street Design Guidelines performed better in all three surveys"
+    ]
   },
-
   "parking_split": {
     "_note": "Share of kerbside parking area occupied by cars vs two-wheelers. Assumption.",
     "car": 0.7,
     "two_wheeler": 0.3
   },
-
   "roads": [
+    {
+      "id": "pune-solapur",
+      "name": "Pune–Solapur Road",
+      "city": "Pune",
+      "group": "pune",
+      "row_m": "42",
+      "widths_m": {
+        "footpath": 6.2,
+        "cycle_track": 3.6,
+        "bus_lane": 8,
+        "carriageway": 24,
+        "parking": 0,
+        "other": 1.2
+      },
+      "usable": {
+        "footpath": 0.25,
+        "cycle_track": 0.5
+      },
+      "counts": {
+        "pedestrians": 3115,
+        "cyclists": 122,
+        "cars": 4686,
+        "two_wheelers": 16388,
+        "autos": 2924,
+        "buses": 508,
+        "goods": 1060,
+        "_raw_am_pm": {
+          "columns": [
+            "pedestrians",
+            "cyclists",
+            "cars",
+            "two_wheelers",
+            "autos",
+            "pmp_bus",
+            "school_bus",
+            "private_bus",
+            "lcv",
+            "truck"
+          ],
+          "am": [
+            1561,
+            42,
+            2286,
+            8880,
+            1452,
+            144,
+            24,
+            60,
+            348,
+            108
+          ],
+          "pm": [
+            1554,
+            80,
+            2400,
+            7508,
+            1472,
+            84,
+            16,
+            180,
+            384,
+            220
+          ]
+        }
+      },
+      "itdp_score": "13.5/30",
+      "status": "measured",
+      "note": "Only 1/4 of stretch has usable footpath; half has usable cycle track. Section incl. service lanes, BRT.",
+      "source": "ITDP/PMC Walk & Cycle Analysis 2022, p.12 (section, AM+PM peak counts) and condition page"
+    },
+    {
+      "id": "magarpatta-mundhwa",
+      "name": "Magarpatta–Mundhwa Road",
+      "city": "Pune",
+      "group": "pune",
+      "row_m": "24–27",
+      "widths_m": {
+        "footpath": 3.6,
+        "cycle_track": 0,
+        "bus_lane": 0,
+        "carriageway": 19.4,
+        "parking": 0,
+        "other": 1.0
+      },
+      "usable": {
+        "footpath": 0.4,
+        "cycle_track": 1
+      },
+      "counts": {
+        "pedestrians": 2170,
+        "cyclists": 120,
+        "cars": 2908,
+        "two_wheelers": 9116,
+        "autos": 1720,
+        "buses": 220,
+        "goods": 604,
+        "_raw_am_pm": {
+          "columns": [
+            "pedestrians",
+            "cyclists",
+            "cars",
+            "two_wheelers",
+            "autos",
+            "pmp_bus",
+            "school_bus",
+            "private_bus",
+            "lcv",
+            "truck"
+          ],
+          "am": [
+            870,
+            48,
+            888,
+            3780,
+            840,
+            36,
+            6,
+            54,
+            132,
+            132
+          ],
+          "pm": [
+            1300,
+            72,
+            2020,
+            5336,
+            880,
+            28,
+            0,
+            96,
+            224,
+            116
+          ]
+        }
+      },
+      "itdp_score": "7/30",
+      "status": "measured",
+      "note": "60% of street has no or unusable footpath; no cycle track.",
+      "source": "ITDP/PMC Walk & Cycle Analysis 2022, p.18 (section, AM+PM peak counts) and condition page"
+    },
+    {
+      "id": "nagar",
+      "name": "Nagar Road",
+      "city": "Pune",
+      "group": "pune",
+      "row_m": "52–60",
+      "widths_m": {
+        "footpath": 5.5,
+        "cycle_track": 0,
+        "bus_lane": 7,
+        "carriageway": 28,
+        "parking": 0,
+        "other": 4.5
+      },
+      "usable": {
+        "footpath": 0.45,
+        "cycle_track": 1
+      },
+      "counts": {
+        "pedestrians": 1342,
+        "cyclists": 378,
+        "cars": 8856,
+        "two_wheelers": 14958,
+        "autos": 3156,
+        "buses": 594,
+        "goods": 816,
+        "_raw_am_pm": {
+          "columns": [
+            "pedestrians",
+            "cyclists",
+            "cars",
+            "two_wheelers",
+            "autos",
+            "pmp_bus",
+            "school_bus",
+            "private_bus",
+            "lcv",
+            "truck"
+          ],
+          "am": [
+            642,
+            138,
+            4596,
+            7758,
+            1596,
+            60,
+            42,
+            156,
+            210,
+            126
+          ],
+          "pm": [
+            700,
+            240,
+            4260,
+            7200,
+            1560,
+            90,
+            36,
+            210,
+            360,
+            120
+          ]
+        }
+      },
+      "itdp_score": "13/30",
+      "status": "measured",
+      "note": "More than half lacks adequate walking infrastructure (usable share ≤0.5, approx). Section shows main carriageway + BRT.",
+      "source": "ITDP/PMC Walk & Cycle Analysis 2022, p.24 (section, AM+PM peak counts) and condition page"
+    },
+    {
+      "id": "vishrantwadi",
+      "name": "Vishrantwadi Road",
+      "city": "Pune",
+      "group": "pune",
+      "row_m": "30",
+      "widths_m": {
+        "footpath": 4.5,
+        "cycle_track": 0,
+        "bus_lane": 0,
+        "carriageway": 22.5,
+        "parking": 0,
+        "other": 3.0
+      },
+      "usable": {
+        "footpath": 0.2,
+        "cycle_track": 1
+      },
+      "counts": {
+        "pedestrians": 1894,
+        "cyclists": 56,
+        "cars": 3018,
+        "two_wheelers": 7896,
+        "autos": 858,
+        "buses": 288,
+        "goods": 438,
+        "_raw_am_pm": {
+          "columns": [
+            "pedestrians",
+            "cyclists",
+            "cars",
+            "two_wheelers",
+            "autos",
+            "pmp_bus",
+            "school_bus",
+            "private_bus",
+            "lcv",
+            "truck"
+          ],
+          "am": [
+            878,
+            24,
+            1218,
+            3990,
+            372,
+            78,
+            6,
+            30,
+            120,
+            78
+          ],
+          "pm": [
+            1016,
+            32,
+            1800,
+            3906,
+            486,
+            102,
+            6,
+            66,
+            192,
+            48
+          ]
+        }
+      },
+      "itdp_score": "8/30",
+      "status": "measured",
+      "note": "More than 3/4 lacks adequate walking infrastructure (≈0.2). Includes a 3 m at-grade strip labelled 'Pedestrian'.",
+      "source": "ITDP/PMC Walk & Cycle Analysis 2022, p.30 (section, AM+PM peak counts) and condition page"
+    },
+    {
+      "id": "raj-bhavan",
+      "name": "Raj Bhavan Road",
+      "city": "Pune",
+      "group": "pune",
+      "row_m": "30",
+      "widths_m": {
+        "footpath": 4,
+        "cycle_track": 4,
+        "bus_lane": 0,
+        "carriageway": 19,
+        "parking": 0,
+        "other": 3
+      },
+      "usable": {
+        "footpath": 0.43,
+        "cycle_track": 0.67
+      },
+      "counts": {
+        "pedestrians": 1042,
+        "cyclists": 82,
+        "cars": 4004,
+        "two_wheelers": 10570,
+        "autos": 1836,
+        "buses": 222,
+        "goods": 558,
+        "_raw_am_pm": {
+          "columns": [
+            "pedestrians",
+            "cyclists",
+            "cars",
+            "two_wheelers",
+            "autos",
+            "pmp_bus",
+            "school_bus",
+            "private_bus",
+            "lcv",
+            "truck"
+          ],
+          "am": [
+            212,
+            16,
+            1748,
+            5116,
+            960,
+            104,
+            12,
+            28,
+            272,
+            76
+          ],
+          "pm": [
+            830,
+            66,
+            2256,
+            5454,
+            876,
+            66,
+            0,
+            12,
+            204,
+            6
+          ]
+        }
+      },
+      "itdp_score": "21/30",
+      "status": "measured",
+      "note": "85% has footpath but only half of it usable; ~2/3 has usable cycle track.",
+      "source": "ITDP/PMC Walk & Cycle Analysis 2022, p.36 (section, AM+PM peak counts) and condition page"
+    },
+    {
+      "id": "pashan",
+      "name": "Pashan Road",
+      "city": "Pune",
+      "group": "pune",
+      "row_m": "24",
+      "widths_m": {
+        "footpath": 3.1,
+        "cycle_track": 1.5,
+        "bus_lane": 0,
+        "carriageway": 18,
+        "parking": 0,
+        "other": 1.4
+      },
+      "usable": {
+        "footpath": 0.57,
+        "cycle_track": 0.17
+      },
+      "counts": {
+        "pedestrians": 1592,
+        "cyclists": 48,
+        "cars": 3288,
+        "two_wheelers": 7040,
+        "autos": 884,
+        "buses": 120,
+        "goods": 208,
+        "_raw_am_pm": {
+          "columns": [
+            "pedestrians",
+            "cyclists",
+            "cars",
+            "two_wheelers",
+            "autos",
+            "pmp_bus",
+            "school_bus",
+            "private_bus",
+            "lcv",
+            "truck"
+          ],
+          "am": [
+            1264,
+            28,
+            1160,
+            3840,
+            364,
+            16,
+            4,
+            4,
+            68,
+            32
+          ],
+          "pm": [
+            328,
+            20,
+            2128,
+            3200,
+            520,
+            24,
+            60,
+            12,
+            108,
+            0
+          ]
+        }
+      },
+      "itdp_score": "12.5/30",
+      "status": "measured",
+      "note": "57% usable footpath; 17% usable cycle track.",
+      "source": "ITDP/PMC Walk & Cycle Analysis 2022, p.42 (section, AM+PM peak counts) and condition page"
+    },
     {
       "id": "jm-road",
       "name": "JM Road",
       "city": "Pune",
-      "row_m": 36,
-      "row_status": "sourced",
-      "split_status": "assumed",
-      "itdp_rank": "1st of 11",
-      "note": "Right of way 36 m (Oasis Designs). Post-redesign split assumed: wide footpaths, cycle track, organised parking. ITDP ranked it the best of 11 audited streets.",
-      "widths_m": { "footpath": 10, "cycle_track": 3, "bus_lane": 0, "carriageway": 12, "parking": 5, "other": 6 }
+      "group": "pune",
+      "row_m": "33–36",
+      "widths_m": {
+        "footpath": 9.6,
+        "cycle_track": 2,
+        "bus_lane": 3.5,
+        "carriageway": 12,
+        "parking": 0,
+        "other": 8.9
+      },
+      "usable": {
+        "footpath": 0.89,
+        "cycle_track": 0.86
+      },
+      "counts": {
+        "pedestrians": 3568,
+        "cyclists": 116,
+        "cars": 2404,
+        "two_wheelers": 8748,
+        "autos": 1344,
+        "buses": 136,
+        "goods": 184,
+        "_raw_am_pm": {
+          "columns": [
+            "pedestrians",
+            "cyclists",
+            "cars",
+            "two_wheelers",
+            "autos",
+            "pmp_bus",
+            "school_bus",
+            "private_bus",
+            "lcv",
+            "truck"
+          ],
+          "am": [
+            2004,
+            52,
+            856,
+            4268,
+            712,
+            40,
+            0,
+            0,
+            68,
+            20
+          ],
+          "pm": [
+            1564,
+            64,
+            1548,
+            4480,
+            632,
+            64,
+            4,
+            28,
+            76,
+            20
+          ]
+        }
+      },
+      "itdp_score": "25.5/30",
+      "status": "measured",
+      "note": "89% usable footpath, 86% usable cycle track. 'Other' = benches, tree zones, transit shelter.",
+      "source": "ITDP/PMC Walk & Cycle Analysis 2022, p.48 (section, AM+PM peak counts) and condition page"
     },
     {
       "id": "karve-road",
       "name": "Karve Road",
       "city": "Pune",
-      "row_m": 30,
-      "row_status": "assumed",
-      "split_status": "assumed",
-      "note": "Typical arterial. Metro runs elevated overhead, so metro riders use no road surface.",
-      "widths_m": { "footpath": 5, "cycle_track": 0, "bus_lane": 0, "carriageway": 20, "parking": 3, "other": 2 }
+      "group": "pune",
+      "row_m": "27–33",
+      "widths_m": {
+        "footpath": 1.8,
+        "cycle_track": 0,
+        "bus_lane": 3,
+        "carriageway": 15,
+        "parking": 0,
+        "other": 7.2
+      },
+      "usable": {
+        "footpath": 0.51,
+        "cycle_track": 1
+      },
+      "counts": {
+        "pedestrians": 2516,
+        "cyclists": 256,
+        "cars": 2940,
+        "two_wheelers": 8740,
+        "autos": 2164,
+        "buses": 372,
+        "goods": 172,
+        "_raw_am_pm": {
+          "columns": [
+            "pedestrians",
+            "cyclists",
+            "cars",
+            "two_wheelers",
+            "autos",
+            "pmp_bus",
+            "school_bus",
+            "private_bus",
+            "lcv",
+            "truck"
+          ],
+          "am": [
+            1024,
+            128,
+            1416,
+            4880,
+            1064,
+            132,
+            32,
+            16,
+            52,
+            20
+          ],
+          "pm": [
+            1492,
+            128,
+            1524,
+            3860,
+            1100,
+            172,
+            12,
+            8,
+            68,
+            32
+          ]
+        }
+      },
+      "itdp_score": "15.5/30",
+      "status": "measured",
+      "note": "51% usable footpath; 75% of street has no cycle track. Metro viaduct + grade separator overhead.",
+      "source": "ITDP/PMC Walk & Cycle Analysis 2022, p.54 (section, AM+PM peak counts) and condition page"
+    },
+    {
+      "id": "sinhagad",
+      "name": "Sinhagad Road",
+      "city": "Pune",
+      "group": "pune",
+      "row_m": "30–36",
+      "widths_m": {
+        "footpath": 5,
+        "cycle_track": 3,
+        "bus_lane": 0,
+        "carriageway": 18,
+        "parking": 5,
+        "other": 2
+      },
+      "usable": {
+        "footpath": 0.45,
+        "cycle_track": 0.45
+      },
+      "counts": {
+        "pedestrians": 1544,
+        "cyclists": 164,
+        "cars": 2378,
+        "two_wheelers": 14104,
+        "autos": 2740,
+        "buses": 102,
+        "goods": 574,
+        "_raw_am_pm": {
+          "columns": [
+            "pedestrians",
+            "cyclists",
+            "cars",
+            "two_wheelers",
+            "autos",
+            "pmp_bus",
+            "school_bus",
+            "private_bus",
+            "lcv",
+            "truck"
+          ],
+          "am": [
+            428,
+            32,
+            1016,
+            7264,
+            1384,
+            40,
+            4,
+            16,
+            296,
+            32
+          ],
+          "pm": [
+            1116,
+            132,
+            1362,
+            6840,
+            1356,
+            12,
+            6,
+            24,
+            246,
+            0
+          ]
+        }
+      },
+      "itdp_score": "12.5/30",
+      "status": "measured",
+      "note": "More than half lacks walkable footpaths and cycling infrastructure (≈0.45).",
+      "source": "ITDP/PMC Walk & Cycle Analysis 2022, p.60 (section, AM+PM peak counts) and condition page"
     },
     {
       "id": "satara-road",
       "name": "Satara Road",
       "city": "Pune",
-      "row_m": 42,
-      "row_status": "assumed",
-      "split_status": "assumed",
-      "itdp_rank": "3rd of 11",
-      "note": "BRT corridor. Space allocated to buses is not the same as space used: BRT ridership has been below capacity. ITDP ranked it 3rd of 11 on design quality, while this index finds walkers squeezed on width: the two measure different things.",
-      "widths_m": { "footpath": 6, "cycle_track": 0, "bus_lane": 7, "carriageway": 22, "parking": 4, "other": 3 }
+      "group": "pune",
+      "row_m": "40–42",
+      "widths_m": {
+        "footpath": 6,
+        "cycle_track": 4,
+        "bus_lane": 7,
+        "carriageway": 18,
+        "parking": 3.4,
+        "other": 1.6
+      },
+      "usable": {
+        "footpath": 0.62,
+        "cycle_track": 0.61
+      },
+      "counts": {
+        "pedestrians": 5190,
+        "cyclists": 156,
+        "cars": 1584,
+        "two_wheelers": 9450,
+        "autos": 474,
+        "buses": 624,
+        "goods": 318,
+        "_raw_am_pm": {
+          "columns": [
+            "pedestrians",
+            "cyclists",
+            "cars",
+            "two_wheelers",
+            "autos",
+            "pmp_bus",
+            "school_bus",
+            "private_bus",
+            "lcv",
+            "truck"
+          ],
+          "am": [
+            2274,
+            132,
+            648,
+            4554,
+            282,
+            282,
+            6,
+            0,
+            144,
+            6
+          ],
+          "pm": [
+            2916,
+            24,
+            936,
+            4896,
+            192,
+            306,
+            6,
+            24,
+            150,
+            18
+          ]
+        }
+      },
+      "itdp_score": "19.5/30",
+      "status": "measured",
+      "note": "62% usable footpath; 61% usable cycle track. BRT in median.",
+      "source": "ITDP/PMC Walk & Cycle Analysis 2022, p.66 (section, AM+PM peak counts) and condition page"
+    },
+    {
+      "id": "shankarsheth",
+      "name": "Shankarsheth Road",
+      "city": "Pune",
+      "group": "pune",
+      "row_m": "33",
+      "widths_m": {
+        "footpath": 4.4,
+        "cycle_track": 3.6,
+        "bus_lane": 3,
+        "carriageway": 18,
+        "parking": 3,
+        "other": 1
+      },
+      "usable": {
+        "footpath": 0.3,
+        "cycle_track": 0.09
+      },
+      "counts": {
+        "pedestrians": 2430,
+        "cyclists": 150,
+        "cars": 3312,
+        "two_wheelers": 13752,
+        "autos": 2982,
+        "buses": 384,
+        "goods": 390,
+        "_raw_am_pm": {
+          "columns": [
+            "pedestrians",
+            "cyclists",
+            "cars",
+            "two_wheelers",
+            "autos",
+            "pmp_bus",
+            "school_bus",
+            "private_bus",
+            "lcv",
+            "truck"
+          ],
+          "am": [
+            1404,
+            96,
+            1602,
+            7152,
+            1404,
+            150,
+            0,
+            12,
+            90,
+            48
+          ],
+          "pm": [
+            1026,
+            54,
+            1710,
+            6600,
+            1578,
+            126,
+            0,
+            96,
+            228,
+            24
+          ]
+        }
+      },
+      "itdp_score": "10.5/30",
+      "status": "measured",
+      "note": "~70% no or unusable footpath; 91% no cycling infrastructure.",
+      "source": "ITDP/PMC Walk & Cycle Analysis 2022, p.72 (section, AM+PM peak counts) and condition page"
+    },
+    {
+      "id": "norrebrogade",
+      "name": "Nørrebrogade",
+      "city": "Copenhagen",
+      "group": "world",
+      "row_m": "~23 (est.)",
+      "widths_m": {
+        "footpath": 8,
+        "cycle_track": 6.5,
+        "bus_lane": 0,
+        "carriageway": 6.5,
+        "parking": 0,
+        "other": 2
+      },
+      "usable": {
+        "footpath": 1,
+        "cycle_track": 1
+      },
+      "counts": {
+        "pedestrians": 6525,
+        "cyclists": 30345,
+        "cars": 15120,
+        "two_wheelers": 0,
+        "autos": 0,
+        "bus_passengers": 30000,
+        "goods": 0
+      },
+      "status": "counts sourced, widths estimated",
+      "note": "Daily counts (2008): 30,345 cyclists, 15,120 cars, 30,000 bus passengers, 6,525 pedestrians. Cycle tracks 3.0–3.5 m per direction; other widths estimated. Buses share the general lanes.",
+      "source": "UrbanLEDS Copenhagen case story; ECF/CHIPS on cycle-track widening"
+    },
+    {
+      "id": "jodenbreestraat",
+      "name": "Jodenbreestraat",
+      "city": "Amsterdam",
+      "group": "world",
+      "row_m": "~28",
+      "widths_m": {
+        "footpath": 11,
+        "cycle_track": 4,
+        "bus_lane": 0,
+        "carriageway": 6,
+        "parking": 0,
+        "other": 7
+      },
+      "usable": {
+        "footpath": 1,
+        "cycle_track": 1
+      },
+      "mode_share": {
+        "walk": 25,
+        "cycle": 50,
+        "bus": 15,
+        "metro": 0,
+        "ipt": 0,
+        "two_wheeler": 0,
+        "car": 10
+      },
+      "parking_split": {
+        "car": 0,
+        "two_wheeler": 0
+      },
+      "status": "illustrative",
+      "note": "~28 m building to building, ~17 m roadway incl. two car lanes, cycle tracks and bike parking, 5.5 m+ sidewalks. Metro runs underneath. Mode share illustrative (central Amsterdam: over half of trips by bike).",
+      "source": "BikePortland, 'Observing Jodenbreestraat' (2013)"
+    },
+    {
+      "id": "rivoli",
+      "name": "Rue de Rivoli",
+      "city": "Paris",
+      "group": "world",
+      "row_m": "~22 (est.)",
+      "widths_m": {
+        "footpath": 9,
+        "cycle_track": 8,
+        "bus_lane": 3.5,
+        "carriageway": 0,
+        "parking": 0,
+        "other": 1.5
+      },
+      "usable": {
+        "footpath": 1,
+        "cycle_track": 1
+      },
+      "mode_share": {
+        "walk": 40,
+        "cycle": 35,
+        "bus": 15,
+        "metro": 0,
+        "ipt": 0,
+        "two_wheeler": 0,
+        "car": 10
+      },
+      "status": "illustrative",
+      "note": "Since 2020: wide two-lane bike route, a single lane for buses, taxis and deliveries. Widths and mode share estimated; metro runs underneath. The car share here are taxis/deliveries using the bus lane.",
+      "source": "Streetsblog NYC (2022); R+M 'Changing Cities: Paris'; Bicycle NSW"
+    },
+    {
+      "id": "ninth-ave",
+      "name": "9th Avenue (34th–50th)",
+      "city": "New York",
+      "group": "world",
+      "row_m": "~30 (est.)",
+      "widths_m": {
+        "footpath": 9.1,
+        "cycle_track": 1.5,
+        "bus_lane": 3.3,
+        "carriageway": 6.6,
+        "parking": 4.8,
+        "other": 1.0
+      },
+      "usable": {
+        "footpath": 1,
+        "cycle_track": 1
+      },
+      "mode_share": {
+        "walk": 45,
+        "cycle": 5,
+        "bus": 10,
+        "metro": 25,
+        "ipt": 0,
+        "two_wheeler": 0,
+        "car": 15
+      },
+      "parking_split": {
+        "car": 1,
+        "two_wheeler": 0
+      },
+      "status": "illustrative",
+      "note": "Existing block before the 2026 redesign: narrow (5 ft) parking-protected bike lane, unpainted bus lane, parking, crowded sidewalks. Subway runs underneath. Widths and mode share estimated.",
+      "source": "NYC DOT 9th Ave 34th–50th St presentation (Mar 2026) and press release"
     }
   ],
-
   "city_context": {
     "pune_rto_vehicles": 4350000,
     "two_wheelers": 3000000,
@@ -101,20 +961,82 @@
     "buses": 22000,
     "pmr_population": 7500000,
     "pmr_vehicles_both_rtos": 6500000,
-    "parking_m2_each": { "car": 12.5, "two_wheeler": 2, "auto": 4, "bus": 40 }
+    "parking_m2_each": {
+      "car": 12.5,
+      "two_wheeler": 2,
+      "auto": 4,
+      "bus": 40
+    }
   },
-
   "sources": [
-    { "claim": "Pune RTO: 43.5 lakh vehicles (≈30 lakh 2W, 9 lakh cars, 1.4 lakh autos, 22,000 buses)", "url": "https://www.freepressjournal.in/amp/pune/rising-vehicle-numbers-push-pune-towards-3-letter-registration-system-all-you-need-to-know" },
-    { "claim": "PMR ~7.5 million people; >6.5 million vehicles across two RTOs; BRT and buses under capacity", "url": "https://www.downtoearth.org.in/air/how-india-moves-punes-roads-buckle-under-an-explosion-of-two-wheeler-traffic" },
-    { "claim": "PMRDA CMP: walking ~25%, PMPML ~10%, metro ~1% (2024)", "url": "https://www.pkc.org.in/wp-content/uploads/2025/08/SUSTAINABLE-TRANSPORT.pdf" },
-    { "claim": "Cycling share 3% in 2025-26", "url": "https://www.punekarnews.in/?p=248729" },
-    { "claim": "JM Road right of way 36 m", "url": "https://www.archify.com/hk/archifynow/jm-road-oasis" },
-    { "claim": "JM Road redesign reclaimed parking space for footpath and cycle track", "url": "https://indiastaging.itdp.org/?p=18732" },
-    { "claim": "Only ~38% of 26 lakh pre-2019 vehicles fitted HSRP (registered ≠ on road)", "url": "https://www.freepressjournal.in/pune/1612-lakh-pune-vehicles-yet-to-get-hsrps-installed" },
-    { "claim": "ITDP audit of 11 Pune streets with ROW > 24 m (full report)", "url": "https://itdp.in/wp-content/uploads/2022/12/Pune-IA-report_final_Ped-day.pdf" },
-    { "claim": "ITDP: 70% of streets had footpaths, only 30% of pedestrians used them; 500 m segments; four principles", "url": "https://itdp.in/pune-streets-impact-assessment/" },
-    { "claim": "ITDP: 2,300 surveyed on 11 roads (~30 km); 32% walk, 40% public transport; JM Road ranked best, then Raj Bhavan and Satara Road", "url": "https://www.punekarnews.in/pmc-itdp-publish-pune-walk-and-cycle-analysis-report/" },
-    { "claim": "Gangtok: 12 km footpath retrofit with utility ducts, railings, tactile tiles", "url": "https://smartcitygangtok.com/Our Projects.aspx" }
-  ]
+    {
+      "claim": "ITDP India & PMC, Pune's Walk & Cycle Analysis (2022): cross-sections, peak-hour counts, footpath/cycle-track usability and scores for 11 Pune streets",
+      "url": "https://itdp.in/resource/punes-walk-cycle-analysis/"
+    },
+    {
+      "claim": "ITDP: how the assessment was set up with PMC; ~50% of transport budget to sustainable transport since 2016",
+      "url": "https://itdp.in/pune-streets-impact-assessment/"
+    },
+    {
+      "claim": "Pune RTO: 43.5 lakh vehicles (≈30 lakh 2W, 9 lakh cars, 1.4 lakh autos, 22,000 buses)",
+      "url": "https://www.freepressjournal.in/amp/pune/rising-vehicle-numbers-push-pune-towards-3-letter-registration-system-all-you-need-to-know"
+    },
+    {
+      "claim": "PMR ~7.5 million people; >6.5 million vehicles across two RTOs; BRT and buses under capacity",
+      "url": "https://www.downtoearth.org.in/air/how-india-moves-punes-roads-buckle-under-an-explosion-of-two-wheeler-traffic"
+    },
+    {
+      "claim": "PMRDA CMP: walking ~25%, PMPML ~10%, metro ~1% (2024)",
+      "url": "https://www.pkc.org.in/wp-content/uploads/2025/08/SUSTAINABLE-TRANSPORT.pdf"
+    },
+    {
+      "claim": "Cycling share 3% in 2025-26",
+      "url": "https://www.punekarnews.in/?p=248729"
+    },
+    {
+      "claim": "JM Road right of way 36 m",
+      "url": "https://www.archify.com/hk/archifynow/jm-road-oasis"
+    },
+    {
+      "claim": "JM Road redesign reclaimed parking space for footpath and cycle track",
+      "url": "https://indiastaging.itdp.org/?p=18732"
+    },
+    {
+      "claim": "Only ~38% of 26 lakh pre-2019 vehicles fitted HSRP (registered ≠ on road)",
+      "url": "https://www.freepressjournal.in/pune/1612-lakh-pune-vehicles-yet-to-get-hsrps-installed"
+    },
+    {
+      "claim": "Gangtok: 12 km footpath retrofit with utility ducts, railings, tactile tiles",
+      "url": "https://smartcitygangtok.com/Our Projects.aspx"
+    },
+    {
+      "claim": "Nørrebrogade daily counts (2008): 30,345 cyclists, 15,120 cars, 30,000 bus passengers, 6,525 pedestrians",
+      "url": "https://urban-leds.org/wp-content/uploads/2019/resources/case_studies/UrbanLEDS_case_story_Copenhagen_2015_Web.pdf"
+    },
+    {
+      "claim": "Nørrebrogade cycle tracks widened to 3.0–3.5 m per direction",
+      "url": "https://vb.nweurope.eu/projects/project-search/cycle-highways-innovation-for-smarter-people-transport-and-spatial-planning/news/wider-cycle-paths-more-attractive-public-space/"
+    },
+    {
+      "claim": "Jodenbreestraat, Amsterdam: ~92 ft building to building, ~56 ft roadway, 18 ft+ sidewalks",
+      "url": "https://bikeportland.org/2013/06/14/observing-jodenbreestraat-a-lively-shopping-street-in-amsterdam-88446"
+    },
+    {
+      "claim": "Rue de Rivoli since 2020: wide bike route, one lane for buses, taxis, deliveries",
+      "url": "https://r-m.de/en-us/magazine/changing-cities-bienvenue-paris"
+    },
+    {
+      "claim": "9th Avenue (34th–50th): narrow bike lane, unpainted bus lane, crowded sidewalks; 2026 redesign adds 9 ft 'super sidewalk'",
+      "url": "https://www.nyc.gov/html/dot/downloads/pdf/9th-ave-34-st-50-st-mar2026.pdf"
+    }
+  ],
+  "calc_footpath_usable": {
+    "_note": "For the 'check your own road' calculator only: fraction of footpath actually walkable. Pune streets use ITDP-observed values per street.",
+    "value": 1.0
+  },
+  "grades": {
+    "_note": "Headline = share of usable street width serving walking, cycling and buses/metro. Second number = fairness ratio: street per person in a motor vehicle (car, two-wheeler, auto) ÷ street per person walking, cycling or on a bus.",
+    "good_min": 50,
+    "ugly_below": 20
+  }
 }
