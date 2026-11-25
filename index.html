@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Who gets the street? — Street Space Index</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23D4537E'/%3E%3Crect x='0' width='10' height='32' fill='%231D9E75'/%3E%3Crect x='22' width='10' height='32' fill='%231D9E75'/%3E%3C/svg%3E">
+<meta name="description" content="How much of an Indian street goes to each way of travelling, compared with how many people each one actually carries. Starts with Pune; check your own road.">
+<style>
+:root{
+  --bg:#FBFAF7;--card:#FFFFFF;--ink:#1F1E1B;--ink2:#5F5E5A;--ink3:#888780;--line:#E4E2DA;--soft:#F1EFE8;
+  --accent:#0F6E56;--accent-bg:#E1F5EE;--warn:#854F0B;--warn-bg:#FAEEDA;--err:#A32D2D;
+  --walk:#1D9E75;--pt:#7F77DD;--ipt:#EF9F27;--tw:#D85A30;--car:#D4537E;--other:#B4B2A9;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#1A1A18;--card:#242422;--ink:#EDEBE4;--ink2:#B4B2A9;--ink3:#888780;--line:#3A3936;--soft:#2E2D2A;
+  --accent:#5DCAA5;--accent-bg:#0B3A2F;--warn:#FAC775;--warn-bg:#3D2A0A;--err:#F09595;
+}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:880px;margin:0 auto;padding:40px 20px 80px}
+h1{font-size:34px;line-height:1.2;font-weight:600;margin:0 0 12px;letter-spacing:-.01em}
+h2{font-size:22px;font-weight:600;margin:56px 0 8px}
+h3{font-size:16px;font-weight:600;margin:0 0 4px}
+p{margin:0 0 14px}
+.lede{font-size:19px;color:var(--ink2);max-width:680px}
+.muted{color:var(--ink3);font-size:14px}
+a{color:var(--accent)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin:28px 0 0}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.stat b{display:block;font-size:24px;font-weight:600}
+.stat span{font-size:13px;color:var(--ink2)}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px}
+.tab{padding:7px 14px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--ink2);font:inherit;font-size:14px;cursor:pointer}
+.tab[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.lbl{font-size:13px;color:var(--ink2);margin:0 0 4px}
+.bar{display:flex;height:36px;border-radius:7px;overflow:hidden;margin:0 0 16px;background:var(--soft)}
+.seg{display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;font-weight:600;transition:flex-basis .45s ease;white-space:nowrap;overflow:hidden}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--ink2);margin:-4px 0 20px}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.idx{display:grid;grid-template-columns:140px 1fr 64px;gap:12px;align-items:center;font-size:14px;margin:7px 0}
+.track{position:relative;height:12px;background:var(--soft);border-radius:6px}
+.fill{height:12px;border-radius:6px;transition:width .45s ease}
+.fair{position:absolute;left:50%;top:-4px;bottom:-4px;width:2px;background:var(--ink3)}
+.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+.badge{display:inline-block;font-size:12px;padding:2px 8px;border-radius:999px;margin-right:6px}
+.b-src{background:var(--accent-bg);color:var(--accent)}
+.b-ass{background:var(--warn-bg);color:var(--warn)}
+.note{font-size:14px;color:var(--ink2);margin-top:14px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:700px){.grid2{grid-template-columns:1fr}.idx{grid-template-columns:110px 1fr 56px}h1{font-size:28px}}
+fieldset{border:1px solid var(--line);border-radius:10px;padding:12px 14px 6px;margin:0 0 14px}
+legend{font-size:13px;color:var(--ink2);padding:0 6px}
+.f{display:grid;grid-template-columns:1fr 92px;gap:8px;align-items:center;margin:0 0 8px;font-size:14px}
+input[type=text],input[type=number]{width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit;font-size:14px}
+input:focus{outline:2px solid var(--accent);outline-offset:1px}
+.err{color:var(--err);font-size:13px;min-height:18px;margin:2px 0 8px}
+.btn{display:inline-block;padding:9px 16px;border-radius:9px;border:1px solid var(--ink);background:var(--ink);color:var(--bg);font:inherit;font-size:14px;cursor:pointer;text-decoration:none}
+.btn.ghost{background:transparent;color:var(--ink)}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+.steps .card{padding:16px}
+.steps small{color:var(--accent);font-weight:600;font-size:12px;letter-spacing:.04em}
+code,.formula{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:14px}
+.formula{background:var(--soft);border-radius:8px;padding:12px 14px;margin:14px 0;overflow-x:auto}
+ul.risks{padding-left:20px}ul.risks li{margin:0 0 8px}
+ol.src{padding-left:20px;font-size:14px;color:var(--ink2)}ol.src li{margin:0 0 6px}
+footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);font-size:13px;color:var(--ink3)}
+.sl{display:grid;grid-template-columns:1fr 150px 54px;gap:10px;align-items:center;font-size:14px;margin:0 0 10px}
+.sl input[type=range]{width:100%;accent-color:var(--accent)}
+.sl output{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+.sl small{display:block;color:var(--ink3);font-size:12px;line-height:1.4}
+.sl.changed output{color:var(--accent)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:6px 28px}
+@media(max-width:700px){.cols{grid-template-columns:1fr}.sl{grid-template-columns:1fr 120px 50px}}
+.progress{height:8px;background:var(--soft);border-radius:4px;overflow:hidden;margin:6px 0 4px}
+.progress div{height:8px;background:var(--accent)}
+</style>
+</head>
+<body>
+<main>
+
+<p class="muted">Street Space Index · v<span id="ver">0.1</span> · an open, checkable estimate</p>
+<h1>Who gets the street?</h1>
+<p class="lede">Every street is a fixed amount of width, shared between people walking, riding buses, two-wheelers and cars. This project measures how much of that width each group gets, compared with how many people each group actually moves.</p>
+
+<div class="card" style="margin-top:22px;border-color:var(--accent);background:var(--accent-bg)">
+  <p style="margin:0;color:var(--ink)"><b>This is not definitive.</b> It's an invitation to analysts to approach a shared problem systematically: how should dense cities allocate a scarce common good, street space, among the people who use it? Every number can be checked, challenged and replaced. Adjust the assumptions, test your own road, and send better data.</p>
+</div>
+
+<div class="stats" id="stats"></div>
+
+<h2>Adjust the assumptions</h2>
+<p>Every number that isn't sourced is a judgement call. Move the sliders to see how sensitive the result is. Everything on this page updates live, including your own road.</p>
+<div class="card">
+  <p class="lbl">How people travel</p>
+  <div class="tabs" id="presets" role="group" aria-label="Mode share preset"></div>
+  <p class="muted" id="presetNote" style="margin:-8px 0 18px"></p>
+  <div class="cols" id="sliders"></div>
+  <div class="row"><button class="btn ghost" id="resetBtn" type="button">Reset to defaults</button></div>
+</div>
+
+<h2>Three Pune roads</h2>
+<p>Top bar: how the street's width is divided. Bottom bar: how the people on it travel. If the two bars don't match, someone has more street than they need, and someone else is squeezed.</p>
+<div class="card">
+  <div class="tabs" id="tabs" role="group" aria-label="Choose a road"></div>
+  <p class="lbl">Share of street width (kerb to kerb, including parking)</p>
+  <div class="bar" id="spaceBar" aria-label="Share of street width"></div>
+  <p class="lbl">Share of people moved (trips)</p>
+  <div class="bar" id="peopleBar" aria-label="Share of people moved"></div>
+  <div class="legend" id="legend"></div>
+  <p class="lbl">Space index = width share ÷ people share. The line marks a fair share (1.0×).</p>
+  <div id="idx"></div>
+  <p class="note" id="roadNote"></p>
+</div>
+
+<h2>What the ITDP street audit adds</h2>
+<p>In 2022 ITDP India and Pune Municipal Corporation audited 11 Pune streets wider than 24 m (about 30 km), interviewing 2,300 people at peak hours. Three findings feed this model:</p>
+<div class="steps">
+  <div class="card"><small>FOOTPATHS</small><h3>70% have them, 30% use them</h3><p class="muted">Most audited streets had footpaths, but only 30% of pedestrians walked on them. Encroachment and obstructions push people onto the road. Use the <b>footpath usable</b> slider to test this.</p></div>
+  <div class="card"><small>CORRIDOR USERS</small><h3>32% walk, 40% public transport</h3><p class="muted">On these corridors, people surveyed walked and rode buses far more than the city average. Try the <b>ITDP corridor</b> preset above. Respondents to a street survey probably over-represent walkers.</p></div>
+  <div class="card"><small>RANKING</small><h3>JM Road best; Satara 3rd</h3><p class="muted">The audit scores design quality, and this index scores width share. They agree on JM Road. On Satara Road they diverge: well-built, but walkers get little width.</p></div>
+</div>
+<p class="muted" style="margin-top:12px">Per-street widths are in the full ITDP report and will replace the assumed Karve and Satara cross-sections in the next version.</p>
+
+<h2>Check your own road</h2>
+<p>Enter the widths of a street you know, in metres. The defaults are Karve Road. You can also change how people travel in your city. Results update as you type.</p>
+<div class="grid2">
+  <div>
+    <fieldset><legend>Where</legend>
+      <div class="f" style="grid-template-columns:110px 1fr"><label for="c_city">City</label><input type="text" id="c_city" value="Pune"></div>
+      <div class="f" style="grid-template-columns:110px 1fr"><label for="c_road">Road / stretch</label><input type="text" id="c_road" value="Karve Road"></div>
+    </fieldset>
+    <fieldset><legend>Cross-section (metres)</legend>
+      <div id="widthInputs"></div>
+      <div class="err" id="wErr" role="alert"></div>
+    </fieldset>
+    <fieldset><legend>How people travel here (% of trips)</legend>
+      <div id="shareInputs"></div>
+      <div class="err" id="sErr" role="alert"></div>
+    </fieldset>
+  </div>
+  <div>
+    <div class="card" style="position:sticky;top:16px">
+      <h3 id="c_title">Karve Road, Pune</h3>
+      <p class="muted" id="c_width">—</p>
+      <p class="lbl">Street width</p>
+      <div class="bar" id="cSpace"></div>
+      <p class="lbl">People moved</p>
+      <div class="bar" id="cPeople"></div>
+      <div id="cIdx"></div>
+      <p class="note" id="cVerdict"></p>
+      <div class="row">
+        <button class="btn ghost" id="shareBtn" type="button">Copy link to this road</button>
+        <a class="btn" id="askBtn" href="#" target="_blank" rel="noopener">Ask for a deeper analysis</a>
+      </div>
+      <p class="muted" id="shareMsg" style="margin-top:8px" aria-live="polite"></p>
+    </div>
+  </div>
+</div>
+
+<h2>How it works</h2>
+<div class="steps">
+  <div class="card"><small>STEP 1</small><h3>Measure the street</h3><p class="muted">Split the kerb-to-kerb width into footpath, cycle track, bus lane, traffic lanes, parking and medians.</p></div>
+  <div class="card"><small>STEP 2</small><h3>Count the people</h3><p class="muted">Use the city's trip mode share: how many trips are made on foot, by bus, by two-wheeler, by car.</p></div>
+  <div class="card"><small>STEP 3</small><h3>Divide the lanes</h3><p class="muted">Shared lanes are split by how much road each vehicle type takes up (vehicles × PCU), not by headcount.</p></div>
+  <div class="card"><small>STEP 4</small><h3>Compare</h3><p class="muted">Index = width share ÷ people share. Above 1 means more street than riders; below 1 means squeezed.</p></div>
+</div>
+<div class="formula">lane demand(mode) = trips(mode) ÷ occupancy(mode) × PCU(mode)<br>space(mode) = [dedicated width + lanes × lane-demand share + parking share] ÷ total width<br>index(mode) = space(mode) ÷ trips(mode)</div>
+<p class="muted">Full method, assumptions and code: <a id="readmeLink" href="#">README</a> · <a id="modelLink" href="#">model/street_space.py</a> · <a id="dataLink" href="data/model.json">data/model.json</a></p>
+
+<h2>What could make this wrong</h2>
+<p>We lead with the ways this estimate could mislead, before anyone relies on it.</p>
+<ul class="risks">
+  <li><b>Registered isn't on the road.</b> RTO totals rarely remove scrapped vehicles. Only about 38% of Pune's 26 lakh pre-2019 vehicles have fitted the now-mandatory high-security plates, which suggests a lot of old registrations are no longer driven.</li>
+  <li><b>City averages aren't corridor reality.</b> A shopping street has many more walkers than the city average. A highway-like road has far fewer. Counts for the specific corridor would beat this.</li>
+  <li><b>Drawn width isn't usable width.</b> Hawkers, poles and transformers take footpath space, so walkers are usually worse off than shown here.</li>
+  <li><b>Space given isn't space used.</b> An under-used bus lane scores well on this index and still fails the city.</li>
+  <li><b>PCU is a simplification.</b> At signals, two-wheelers fill gaps between cars, so they probably take less lane space than we assume.</li>
+</ul>
+
+<h2>Progress</h2>
+<p class="muted">How close this is to a defensible estimate:</p>
+<div class="progress" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"><div style="width:50%"></div></div>
+<p class="muted">50% · Done: method, city context, 3 roads, adjustable assumptions, ITDP audit findings (footpath use, corridor users, ranking). Next: per-street widths from the full ITDP report, corridor traffic counts, more cities from requests.</p>
+
+<h2>Sources</h2>
+<ol class="src" id="sources"></ol>
+
+<footer>
+  Inspired by <a href="https://x.com/thebetterindia" target="_blank" rel="noopener">The Better India</a>'s post on Gangtok: what if Indian cities were designed for people, not just vehicles? Thank you for highlighting the story. · Code MIT, text CC BY 4.0 ·
+  <a id="repoLink" href="#">GitHub</a>
+</footer>
+</main>
+
+<script>
+const REPO = "https://github.com/finkrishna/street-space-index";
+const G = [["walk","Walk + cycle","--walk"],["pt","Bus + metro","--pt"],["ipt","Auto + cab","--ipt"],["tw","Two-wheeler","--tw"],["car","Car","--car"],["other","Medians, encroached","--other"]];
+const SL = [
+  ["footpath_usable","value","Footpath usable",0.2,1,0.05,v=>Math.round(v*100)+"%","Share of footpath not encroached"],
+  ["occupancy","two_wheeler","People per two-wheeler",1,2,0.05,v=>v.toFixed(2),"Pillion riders"],
+  ["occupancy","car","People per car",1,3,0.1,v=>v.toFixed(1),"Solo driving lowers this"],
+  ["occupancy","ipt","People per auto/cab",1,3,0.1,v=>v.toFixed(1),"Shared autos raise this"],
+  ["occupancy","bus","People per bus",10,80,5,v=>v.toFixed(0),"Average load, not capacity"],
+  ["pcu","two_wheeler","Lane space: two-wheeler",0.3,1,0.05,v=>v.toFixed(2)+"×","Relative to a car (1.0)"],
+  ["pcu","ipt","Lane space: auto",0.8,2,0.1,v=>v.toFixed(1)+"×","Relative to a car"],
+  ["pcu","bus","Lane space: bus",2,4,0.1,v=>v.toFixed(1)+"×","Relative to a car"],
+  ["parking_split","car","Parking used by cars",0,1,0.05,v=>Math.round(v*100)+"%","Rest is two-wheelers"]
+];
+let BASE, presetKey = "pune_city";
+const WF = [["footpath","Footpaths (both sides)"],["cycle_track","Cycle track"],["bus_lane","Dedicated bus lane"],["carriageway","Traffic lanes"],["parking","Parking"],["other","Medians, planters, other"]];
+const SF = [["walk_cycle","Walk + cycle"],["bus","Bus"],["metro","Metro / rail"],["ipt","Auto + cab"],["two_wheeler","Two-wheeler"],["car","Car"]];
+let MODEL;
+
+function compute(widths, ms, m){
+  const W = Object.values(widths).reduce((a,b)=>a+b,0);
+  const hasBL = widths.bus_lane > 0;
+  const modes = ["two_wheeler","car","ipt"].concat(hasBL?[]:["bus"]);
+  const d = {}; let tot = 0;
+  modes.forEach(k=>{ d[k] = ms[k]/m.occupancy[k]*m.pcu[k]; tot += d[k]; });
+  const s = {two_wheeler:0,car:0,ipt:0,bus:0};
+  modes.forEach(k=>{ s[k] = tot ? d[k]/tot : 0; });
+  const cw = widths.carriageway, pk = widths.parking, ps = m.parking_split;
+  const u = m.footpath_usable.value, fp = widths.footpath;
+  const space = {
+    walk:(fp*u+widths.cycle_track)/W,
+    pt:(widths.bus_lane + cw*s.bus)/W,
+    ipt:cw*s.ipt/W,
+    tw:(cw*s.two_wheeler + pk*ps.two_wheeler)/W,
+    car:(cw*s.car + pk*ps.car)/W,
+    other:(widths.other + fp*(1-u))/W
+  };
+  const P = SF.reduce((a,[k])=>a+ms[k],0);
+  const people = {walk:ms.walk_cycle/P, pt:(ms.bus+ms.metro)/P, ipt:ms.ipt/P, tw:ms.two_wheeler/P, car:ms.car/P, other:0};
+  const index = {}; Object.keys(space).forEach(k=>index[k] = people[k] ? space[k]/people[k] : null);
+  return {W, space, people, index};
+}
+
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+function bar(el, d){
+  el.innerHTML = G.map(([k,l,c])=>{
+    const v = d[k]*100; if (v <= 0.05) return "";
+    return `<div class="seg" style="flex:0 0 ${v}%;background:var(${c})" title="${l}: ${v.toFixed(1)}%">${v>=7?Math.round(v)+"%":""}</div>`;
+  }).join("");
+}
+function idx(el, r){
+  el.innerHTML = G.filter(g=>g[0]!=="other").map(([k,l,c])=>{
+    const x = r.index[k]; if (x===null) return "";
+    return `<div class="idx"><span>${l}</span><div class="track"><div class="fill" style="width:${Math.min(x/2,1)*100}%;background:var(${c})"></div><div class="fair"></div></div><span class="num">${x.toFixed(2)}×</span></div>`;
+  }).join("");
+}
+function verdict(r){
+  const ks = G.filter(g=>g[0]!=="other" && r.index[g[0]]!==null);
+  const hi = ks.reduce((a,b)=> r.index[b[0]]>r.index[a[0]]?b:a);
+  const lo = ks.reduce((a,b)=> r.index[b[0]]<r.index[a[0]]?b:a);
+  return `Most over-served: ${hi[1].toLowerCase()} (${r.index[hi[0]].toFixed(2)}×). Most squeezed: ${lo[1].toLowerCase()} (${r.index[lo[0]].toFixed(2)}×).`;
+}
+
+let curRoad = 1;
+function drawRoad(i){
+  curRoad = i;
+  const road = MODEL.roads[i];
+  document.querySelectorAll("#tabs .tab").forEach((t,j)=>t.setAttribute("aria-pressed", j===i));
+  const r = compute(road.widths_m, MODEL.mode_share_pct, MODEL);
+  bar(document.getElementById("spaceBar"), r.space);
+  bar(document.getElementById("peopleBar"), r.people);
+  idx(document.getElementById("idx"), r);
+  const b = s => s==="sourced" ? '<span class="badge b-src">sourced</span>' : '<span class="badge b-ass">assumed</span>';
+  document.getElementById("roadNote").innerHTML = `${b(road.row_status)}width ${road.row_m} m ${b(road.split_status)}lane split · ${road.note} ${verdict(r)}`;
+}
+
+function buildSliders(){
+  document.getElementById("sliders").innerHTML = SL.map(([g,k,l,mn,mx,st,fmt,hint],i)=>
+    `<div class="sl" id="slrow${i}"><label for="sl${i}">${l}<small>${hint}</small></label><input type="range" id="sl${i}" min="${mn}" max="${mx}" step="${st}" value="${MODEL[g][k]}"><output id="slo${i}" for="sl${i}">${fmt(MODEL[g][k])}</output></div>`).join("");
+  SL.forEach(([g,k,,,,,fmt],i)=>{
+    const el = document.getElementById("sl"+i);
+    el.addEventListener("input", ()=>{
+      const v = parseFloat(el.value); MODEL[g][k] = v;
+      if (g==="parking_split" && k==="car") MODEL.parking_split.two_wheeler = +(1-v).toFixed(2);
+      document.getElementById("slo"+i).textContent = fmt(v);
+      document.getElementById("slrow"+i).classList.toggle("changed", Math.abs(v-BASE[g][k])>1e-9);
+      redrawAll();
+    });
+  });
+  const pr = document.getElementById("presets");
+  pr.innerHTML = Object.entries(MODEL.mode_share_presets).map(([k,p])=>`<button class="tab" type="button" data-k="${k}" aria-pressed="${k===presetKey}">${p.label}</button>`).join("");
+  pr.querySelectorAll("button").forEach(b=>b.onclick=()=>applyPreset(b.dataset.k, true));
+  applyPreset(presetKey, false);
+}
+function applyPreset(k, fillCalc){
+  presetKey = k;
+  const p = MODEL.mode_share_presets[k];
+  SF.forEach(([f])=> MODEL.mode_share_pct[f] = p[f]);
+  document.querySelectorAll("#presets button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.k===k));
+  document.getElementById("presetNote").textContent = p._note || "Trip shares for the whole city. Used for the three Pune roads; your road uses its own shares below.";
+  if (fillCalc) SF.forEach(([f])=> document.getElementById("s_"+f).value = p[f]);
+  redrawAll();
+}
+function resetAll(){
+  ["occupancy","pcu","parking_split","footpath_usable"].forEach(g=> MODEL[g] = JSON.parse(JSON.stringify(BASE[g])));
+  buildSliders(); applyPreset("pune_city", true);
+}
+function redrawAll(){
+  stats(MODEL);
+  if (document.getElementById("tabs").children.length) drawRoad(curRoad);
+  if (document.getElementById("w_footpath")) drawCalc();
+}
+
+function readCalc(){
+  const widths = {}, ms = {};
+  WF.forEach(([k])=> widths[k] = Math.max(0, parseFloat(document.getElementById("w_"+k).value) || 0));
+  SF.forEach(([k])=> ms[k] = Math.max(0, parseFloat(document.getElementById("s_"+k).value) || 0));
+  return {city:document.getElementById("c_city").value.trim(), road:document.getElementById("c_road").value.trim(), widths, ms};
+}
+function encodeState(st){ return btoa(unescape(encodeURIComponent(JSON.stringify(st)))); }
+function decodeState(h){ try { return JSON.parse(decodeURIComponent(escape(atob(h)))); } catch(e){ return null; } }
+
+function drawCalc(){
+  const st = readCalc();
+  const W = Object.values(st.widths).reduce((a,b)=>a+b,0);
+  const S = Object.values(st.ms).reduce((a,b)=>a+b,0);
+  const wErr = document.getElementById("wErr"), sErr = document.getElementById("sErr");
+  wErr.textContent = W <= 0 ? "Enter at least one width greater than 0 m." : "";
+  sErr.textContent = S <= 0 ? "Enter at least one travel share." : (Math.abs(S-100) > 1 ? `Shares add up to ${S.toFixed(0)}%. They'll be rescaled to 100%.` : "");
+  document.getElementById("c_title").textContent = [st.road||"Your road", st.city].filter(Boolean).join(", ");
+  if (W <= 0 || S <= 0){ ["cSpace","cPeople","cIdx"].forEach(id=>document.getElementById(id).innerHTML=""); document.getElementById("cVerdict").textContent=""; return; }
+  if (st.ms.car + st.ms.two_wheeler + st.ms.ipt + (st.widths.bus_lane>0?0:st.ms.bus) === 0 && st.widths.carriageway > 0){
+    sErr.textContent = "No motor-vehicle trips entered, so traffic lanes can't be split. Add some vehicle share.";
+  }
+  const r = compute(st.widths, st.ms, MODEL);
+  document.getElementById("c_width").textContent = `${W.toFixed(1)} m kerb to kerb`;
+  bar(document.getElementById("cSpace"), r.space);
+  bar(document.getElementById("cPeople"), r.people);
+  idx(document.getElementById("cIdx"), r);
+  document.getElementById("cVerdict").textContent = verdict(r);
+  const widthsTxt = WF.map(([k,l])=>`${l}: ${st.widths[k]} m`).join("\n");
+  const shareTxt = SF.map(([k,l])=>`${l}: ${st.ms[k]}%`).join("\n");
+  const q = new URLSearchParams({
+    template:"road-request.yml",
+    title:`Road analysis: ${st.road||"my road"}, ${st.city||"my city"}`,
+    city:st.city, road:st.road, widths:widthsTxt, mode_share:shareTxt,
+    first_pass:`Index from the web calculator:\n` + G.filter(g=>g[0]!=="other").map(([k,l])=>`${l}: ${r.index[k]===null?"–":r.index[k].toFixed(2)+"x"}`).join("\n")
+  });
+  document.getElementById("askBtn").href = `${REPO}/issues/new?${q.toString()}`;
+  history.replaceState(null, "", "#road=" + encodeState(st));
+}
+
+function setCalc(st){
+  document.getElementById("c_city").value = st.city ?? "";
+  document.getElementById("c_road").value = st.road ?? "";
+  WF.forEach(([k])=> document.getElementById("w_"+k).value = st.widths?.[k] ?? 0);
+  SF.forEach(([k])=> document.getElementById("s_"+k).value = st.ms?.[k] ?? 0);
+}
+
+function stats(m){
+  const c = m.city_context, a = c.parking_m2_each;
+  const km2 = (c.cars*a.car + c.two_wheelers*a.two_wheeler + c.autos*a.auto + c.buses*a.bus)/1e6;
+  const items = [
+    [(c.pune_rto_vehicles/1e5).toFixed(1)+" lakh","vehicles registered with Pune RTO"],
+    [(c.pmr_vehicles_both_rtos/c.pmr_population).toFixed(2),"vehicles per person, Pune region"],
+    [km2.toFixed(1)+" km²","needed just to park them, ≈"+Math.round(km2*1e6/7140).toLocaleString("en-IN")+" football pitches"],
+    [m.mode_share_pct.walk_cycle+"%","of trips are on foot or by cycle"]
+  ];
+  document.getElementById("stats").innerHTML = items.map(([b,s])=>`<div class="stat"><b>${b}</b><span>${s}</span></div>`).join("");
+}
+
+async function init(){
+  try {
+    MODEL = await (await fetch("data/model.json", {cache:"no-store"})).json();
+  } catch(e){
+    document.querySelector("main").insertAdjacentHTML("afterbegin", '<p class="err">Could not load data/model.json. Open this page through a web server (e.g. GitHub Pages or <code>python3 -m http.server</code>).</p>');
+    return;
+  }
+  BASE = JSON.parse(JSON.stringify(MODEL));
+  document.getElementById("ver").textContent = MODEL.version;
+  ["repoLink"].forEach(id=>document.getElementById(id).href = REPO);
+  document.getElementById("readmeLink").href = REPO + "#readme";
+  document.getElementById("modelLink").href = REPO + "/blob/main/model/street_space.py";
+  stats(MODEL);
+  document.getElementById("legend").innerHTML = G.map(([k,l,c])=>`<span><i style="background:var(${c})"></i>${l}</span>`).join("");
+  const tabs = document.getElementById("tabs");
+  MODEL.roads.forEach((r,i)=>{ const b=document.createElement("button"); b.className="tab"; b.type="button"; b.textContent=r.name; b.onclick=()=>drawRoad(i); tabs.appendChild(b); });
+  drawRoad(1);
+
+  document.getElementById("widthInputs").innerHTML = WF.map(([k,l])=>`<div class="f"><label for="w_${k}">${l}</label><input type="number" min="0" step="0.5" id="w_${k}"></div>`).join("");
+  document.getElementById("shareInputs").innerHTML = SF.map(([k,l])=>`<div class="f"><label for="s_${k}">${l}</label><input type="number" min="0" step="1" id="s_${k}"></div>`).join("");
+  const karve = MODEL.roads.find(r=>r.id==="karve-road");
+  const ms = {}; SF.forEach(([k])=>ms[k]=MODEL.mode_share_pct[k]);
+  const fromHash = location.hash.startsWith("#road=") ? decodeState(location.hash.slice(6)) : null;
+  setCalc(fromHash || {city:"Pune", road:"Karve Road", widths:karve.widths_m, ms});
+  document.querySelectorAll("#widthInputs input,#shareInputs input,#c_city,#c_road").forEach(el=>el.addEventListener("input", drawCalc));
+  buildSliders();
+  document.getElementById("resetBtn").onclick = resetAll;
+  drawCalc();
+  if (fromHash) document.getElementById("c_city").scrollIntoView({behavior:"smooth"});
+
+  document.getElementById("shareBtn").onclick = async ()=>{
+    const msg = document.getElementById("shareMsg");
+    try { await navigator.clipboard.writeText(location.href); msg.textContent = "Link copied. Anyone who opens it sees this road."; }
+    catch(e){ msg.textContent = "Copy this address from your browser bar to share this road."; }
+  };
+  document.getElementById("sources").innerHTML = MODEL.sources.map(s=>`<li>${s.claim} — <a href="${encodeURI(s.url)}" target="_blank" rel="noopener">source</a></li>`).join("");
+}
+init();
+</script>
+</body>
+</html>

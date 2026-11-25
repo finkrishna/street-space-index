@@ -1,0 +1,50 @@
+name: Analyse my road
+description: Ask for a Street Space Index analysis of a road in any city
+title: "Road analysis: <road>, <city>"
+labels: ["road-request"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for adding a road! The more you can measure or link, the better the analysis. Rough numbers are fine; tell us which ones are guesses.
+        Tip: the **Check your own road** calculator on the [live site](https://finkrishna.github.io/street-space-index/) fills most of this form for you.
+  - type: input
+    id: city
+    attributes:
+      label: City
+    validations:
+      required: true
+  - type: input
+    id: road
+    attributes:
+      label: Road and stretch
+      description: e.g. "Karve Road, Nal Stop to Karve Statue"
+    validations:
+      required: true
+  - type: textarea
+    id: widths
+    attributes:
+      label: Cross-section (metres)
+      description: Footpaths (both sides), cycle track, bus lane, traffic lanes, parking, medians/other. Say which are measured and which are estimated.
+    validations:
+      required: true
+  - type: textarea
+    id: mode_share
+    attributes:
+      label: How people travel here (% of trips)
+      description: City averages are fine; corridor counts are better. Link the source if you have one.
+  - type: textarea
+    id: first_pass
+    attributes:
+      label: First-pass result from the calculator
+      description: Filled in automatically if you came from the website.
+  - type: textarea
+    id: question
+    attributes:
+      label: What do you want to know?
+      description: e.g. "Would removing kerbside parking give walkers a fair share?"
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Photos, links, measurements
+      description: Drag images here. Photos of encroachment or footpath conditions help a lot.

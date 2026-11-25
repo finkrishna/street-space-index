@@ -1,0 +1,120 @@
+{
+  "_about": "Single source of truth for the Street Space Index. Both index.html and model/street_space.py read this file. Every number is either sourced (see 'sources') or an explicit, adjustable assumption.",
+  "version": "0.2.0",
+  "updated": "2026-11-25",
+
+  "mode_share_pct": {
+    "_note": "Share of daily trips in Pune, approximated from the PMRDA Comprehensive Mobility Plan update (walking ~25%, PMPML ~10%, metro ~1%, auto+cab ~10%) and the 2025-26 cycling figure (3%). Two-wheeler/car split is an assumption.",
+    "walk_cycle": 29,
+    "bus": 10,
+    "metro": 1,
+    "ipt": 10,
+    "two_wheeler": 37,
+    "car": 13
+  },
+
+  "occupancy": {
+    "_note": "Average persons per vehicle. Assumptions; adjust with local survey data.",
+    "two_wheeler": 1.3,
+    "car": 1.6,
+    "ipt": 1.8,
+    "bus": 40
+  },
+
+  "pcu": {
+    "_note": "Passenger Car Units: how much lane space a vehicle takes relative to a car. Values in the range used in Indian urban practice (IRC:106); treat as adjustable.",
+    "two_wheeler": 0.75,
+    "car": 1.0,
+    "ipt": 1.2,
+    "bus": 3.0
+  },
+
+  "footpath_usable": {
+    "_note": "Fraction of drawn footpath width that is actually walkable (not encroached or obstructed). 1.0 = all of it. The ITDP audit found only 30% of pedestrians used footpaths on 11 Pune corridors, which suggests much lower real usability; the unusable part is counted as 'Medians, planters, encroached'.",
+    "value": 1.0
+  },
+
+  "mode_share_presets": {
+    "pune_city": { "label": "Pune city average (PMRDA CMP)", "walk_cycle": 29, "bus": 10, "metro": 1, "ipt": 10, "two_wheeler": 37, "car": 13 },
+    "itdp_corridors": { "label": "ITDP 11-corridor respondents (2022)", "_note": "ITDP surveyed 2,300 people on 11 corridors: 32% walked, 40% used public transport. The remaining 28% is split across 2W/car/auto in Pune's city ratio (assumption). Perception-survey respondents probably over-represent walkers and bus users.", "walk_cycle": 32, "bus": 39, "metro": 1, "ipt": 4.7, "two_wheeler": 17.3, "car": 6 }
+  },
+
+  "itdp_audit": {
+    "title": "Pune's Walk & Cycle Analysis (ITDP India + PMC, Dec 2022)",
+    "scope": "11 streets with right of way > 24 m, ~30 km, split into 500 m segments; design, observation and perception surveys; 2,300 people surveyed Oct-Nov 2022 at peak hours",
+    "findings": [
+      "70% of surveyed streets had footpaths, but only 30% of pedestrians used them",
+      "Encroachments and obstructions make footpaths and cycle tracks inaccessible",
+      "Streets built to Pune's Urban Street Design Guidelines performed better in all surveys",
+      "Survey respondents: 32% walked, 40% used public transport"
+    ],
+    "ranking": { "best": ["JM Road", "Raj Bhavan Road", "Satara Road"], "worst": ["Magarpatta-Mundhwa Road", "Vishrantwadi Road", "Shankarsheth Road"] },
+    "not_available_here": "Per-street widths and footpath measurements are in the full PDF, which could not be retrieved programmatically. Road widths below remain assumptions except JM Road."
+  },
+
+  "parking_split": {
+    "_note": "Share of kerbside parking area occupied by cars vs two-wheelers. Assumption.",
+    "car": 0.7,
+    "two_wheeler": 0.3
+  },
+
+  "roads": [
+    {
+      "id": "jm-road",
+      "name": "JM Road",
+      "city": "Pune",
+      "row_m": 36,
+      "row_status": "sourced",
+      "split_status": "assumed",
+      "itdp_rank": "1st of 11",
+      "note": "Right of way 36 m (Oasis Designs). Post-redesign split assumed: wide footpaths, cycle track, organised parking. ITDP ranked it the best of 11 audited streets.",
+      "widths_m": { "footpath": 10, "cycle_track": 3, "bus_lane": 0, "carriageway": 12, "parking": 5, "other": 6 }
+    },
+    {
+      "id": "karve-road",
+      "name": "Karve Road",
+      "city": "Pune",
+      "row_m": 30,
+      "row_status": "assumed",
+      "split_status": "assumed",
+      "note": "Typical arterial. Metro runs elevated overhead, so metro riders use no road surface.",
+      "widths_m": { "footpath": 5, "cycle_track": 0, "bus_lane": 0, "carriageway": 20, "parking": 3, "other": 2 }
+    },
+    {
+      "id": "satara-road",
+      "name": "Satara Road",
+      "city": "Pune",
+      "row_m": 42,
+      "row_status": "assumed",
+      "split_status": "assumed",
+      "itdp_rank": "3rd of 11",
+      "note": "BRT corridor. Space allocated to buses is not the same as space used: BRT ridership has been below capacity. ITDP ranked it 3rd of 11 on design quality, while this index finds walkers squeezed on width: the two measure different things.",
+      "widths_m": { "footpath": 6, "cycle_track": 0, "bus_lane": 7, "carriageway": 22, "parking": 4, "other": 3 }
+    }
+  ],
+
+  "city_context": {
+    "pune_rto_vehicles": 4350000,
+    "two_wheelers": 3000000,
+    "cars": 900000,
+    "autos": 140000,
+    "buses": 22000,
+    "pmr_population": 7500000,
+    "pmr_vehicles_both_rtos": 6500000,
+    "parking_m2_each": { "car": 12.5, "two_wheeler": 2, "auto": 4, "bus": 40 }
+  },
+
+  "sources": [
+    { "claim": "Pune RTO: 43.5 lakh vehicles (≈30 lakh 2W, 9 lakh cars, 1.4 lakh autos, 22,000 buses)", "url": "https://www.freepressjournal.in/amp/pune/rising-vehicle-numbers-push-pune-towards-3-letter-registration-system-all-you-need-to-know" },
+    { "claim": "PMR ~7.5 million people; >6.5 million vehicles across two RTOs; BRT and buses under capacity", "url": "https://www.downtoearth.org.in/air/how-india-moves-punes-roads-buckle-under-an-explosion-of-two-wheeler-traffic" },
+    { "claim": "PMRDA CMP: walking ~25%, PMPML ~10%, metro ~1% (2024)", "url": "https://www.pkc.org.in/wp-content/uploads/2025/08/SUSTAINABLE-TRANSPORT.pdf" },
+    { "claim": "Cycling share 3% in 2025-26", "url": "https://www.punekarnews.in/?p=248729" },
+    { "claim": "JM Road right of way 36 m", "url": "https://www.archify.com/hk/archifynow/jm-road-oasis" },
+    { "claim": "JM Road redesign reclaimed parking space for footpath and cycle track", "url": "https://indiastaging.itdp.org/?p=18732" },
+    { "claim": "Only ~38% of 26 lakh pre-2019 vehicles fitted HSRP (registered ≠ on road)", "url": "https://www.freepressjournal.in/pune/1612-lakh-pune-vehicles-yet-to-get-hsrps-installed" },
+    { "claim": "ITDP audit of 11 Pune streets with ROW > 24 m (full report)", "url": "https://itdp.in/wp-content/uploads/2022/12/Pune-IA-report_final_Ped-day.pdf" },
+    { "claim": "ITDP: 70% of streets had footpaths, only 30% of pedestrians used them; 500 m segments; four principles", "url": "https://itdp.in/pune-streets-impact-assessment/" },
+    { "claim": "ITDP: 2,300 surveyed on 11 roads (~30 km); 32% walk, 40% public transport; JM Road ranked best, then Raj Bhavan and Satara Road", "url": "https://www.punekarnews.in/pmc-itdp-publish-pune-walk-and-cycle-analysis-report/" },
+    { "claim": "Gangtok: 12 km footpath retrofit with utility ducts, railings, tactile tiles", "url": "https://smartcitygangtok.com/Our Projects.aspx" }
+  ]
+}
