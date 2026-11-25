@@ -1,6 +1,8 @@
 # Who gets the street? — Street Space Index
 
-**Live site:** https://finkrishna.github.io/street-space-index/
+[![Karve Road, Pune: cars get 1.67× their fair share of street width; walkers 0.57×; bus riders 0.12×](docs/preview.png)](https://finkrishna.github.io/street-space-index/)
+
+**▶ Try it live:** https://finkrishna.github.io/street-space-index/ — switch roads, move the assumption sliders, check your own street.
 
 > **This is not a definitive study.** It's an invitation to analysts, planners, students and curious citizens to approach a shared problem systematically: how should dense Indian cities allocate a scarce common good, street space, among the people who need it? Every number here can be checked, challenged and replaced. Better data and sharper methods are the point.
 
