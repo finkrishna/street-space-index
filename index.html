@@ -18,7 +18,7 @@
 }}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-main{max-width:880px;margin:0 auto;padding:40px 20px 80px}
+main{max-width:880px;margin:0 auto;padding:24px 20px 80px}
 h1{font-size:34px;line-height:1.2;font-weight:600;margin:0 0 12px;letter-spacing:-.01em}
 h2{font-size:22px;font-weight:600;margin:56px 0 8px}
 h3{font-size:16px;font-weight:600;margin:0 0 4px}
@@ -49,7 +49,7 @@ a{color:var(--accent)}
 .b-ass{background:var(--warn-bg);color:var(--warn)}
 .note{font-size:14px;color:var(--ink2);margin-top:14px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-@media(max-width:700px){.grid2{grid-template-columns:1fr}.idx{grid-template-columns:110px 1fr 56px}h1{font-size:28px}}
+@media(max-width:700px){.grid2{grid-template-columns:1fr}.idx{grid-template-columns:110px 1fr 56px;margin:5px 0}h1{font-size:24px;margin-bottom:6px}.lede{font-size:15px;line-height:1.5}main{padding-top:14px}.tab{padding:5px 11px;font-size:13px}.card{padding:16px}.legend{gap:4px 12px;font-size:12px}}
 fieldset{border:1px solid var(--line);border-radius:10px;padding:12px 14px 6px;margin:0 0 14px}
 legend{font-size:13px;color:var(--ink2);padding:0 6px}
 .f{display:grid;grid-template-columns:1fr 92px;gap:8px;align-items:center;margin:0 0 8px;font-size:14px}
@@ -81,11 +81,23 @@ footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);font-si
 <body>
 <main>
 
-<p class="muted">Street Space Index · v<span id="ver">0.1</span> · an open, checkable estimate</p>
+<p class="muted">Street Space Index · v<span id="ver">0.1</span> · not definitive, an open invitation to analysts</p>
 <h1>Who gets the street?</h1>
-<p class="lede">Every street is a fixed amount of width, shared between people walking, riding buses, two-wheelers and cars. This project measures how much of that width each group gets, compared with how many people each group actually moves.</p>
+<p class="lede">How much of a street's width each group gets, compared with how many people each group moves. Three Pune roads — pick one.</p>
+<div class="card" style="margin-top:20px">
+  <div class="tabs" id="tabs" role="group" aria-label="Choose a road"></div>
+  <p class="lbl">Share of street width (kerb to kerb, including parking)</p>
+  <div class="bar" id="spaceBar" aria-label="Share of street width"></div>
+  <p class="lbl">Share of people moved (trips)</p>
+  <div class="bar" id="peopleBar" aria-label="Share of people moved"></div>
+  <div class="legend" id="legend"></div>
+  <p class="lbl">Space index = width share ÷ people share. The line marks a fair share (1.0×).</p>
+  <div id="idx"></div>
+  <p class="note" id="roadNote"></p>
+</div>
 
-<div class="card" style="margin-top:22px;border-color:var(--accent);background:var(--accent-bg)">
+
+<div class="card" style="margin-top:18px;border-color:var(--accent);background:var(--accent-bg)">
   <p style="margin:0;color:var(--ink)"><b>This is not definitive.</b> It's an invitation to analysts to approach a shared problem systematically: how should dense cities allocate a scarce common good, street space, among the people who use it? Every number can be checked, challenged and replaced. Adjust the assumptions, test your own road, and send better data.</p>
 </div>
 
@@ -101,19 +113,6 @@ footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);font-si
   <div class="row"><button class="btn ghost" id="resetBtn" type="button">Reset to defaults</button></div>
 </div>
 
-<h2>Three Pune roads</h2>
-<p>Top bar: how the street's width is divided. Bottom bar: how the people on it travel. If the two bars don't match, someone has more street than they need, and someone else is squeezed.</p>
-<div class="card">
-  <div class="tabs" id="tabs" role="group" aria-label="Choose a road"></div>
-  <p class="lbl">Share of street width (kerb to kerb, including parking)</p>
-  <div class="bar" id="spaceBar" aria-label="Share of street width"></div>
-  <p class="lbl">Share of people moved (trips)</p>
-  <div class="bar" id="peopleBar" aria-label="Share of people moved"></div>
-  <div class="legend" id="legend"></div>
-  <p class="lbl">Space index = width share ÷ people share. The line marks a fair share (1.0×).</p>
-  <div id="idx"></div>
-  <p class="note" id="roadNote"></p>
-</div>
 
 <h2>What the ITDP street audit adds</h2>
 <p>In 2022 ITDP India and Pune Municipal Corporation audited 11 Pune streets wider than 24 m (about 30 km), interviewing 2,300 people at peak hours. Three findings feed this model:</p>
